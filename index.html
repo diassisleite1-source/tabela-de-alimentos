@@ -233,6 +233,36 @@
       border-color: var(--teal);
     }
 
+    .pct-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--slate);
+    }
+
+    .pct-box input {
+      width: 64px;
+      padding: 4px 6px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-align: center;
+      border: 1px solid #94a3b8;
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--slate);
+      outline: none;
+    }
+
+    .pct-box input:focus {
+      border-color: var(--terracotta);
+    }
+
     .status-msg {
       margin-top: 10px;
       font-size: 0.86rem;
@@ -657,10 +687,24 @@
 
       <div class="env-bar" id="envBar">
         <span class="quick-label">Ambiente / Porção:</span>
-        <button type="button" class="env-btn active" data-env="salao" data-mult="1">Salão (100%)</button>
-        <button type="button" class="env-btn" data-env="delivery" data-mult="1.15">Delivery / Marmita (+15%)</button>
-        <button type="button" class="env-btn" data-env="buffet" data-mult="0.85">Buffet / Evento (-15%)</button>
-        <button type="button" class="env-btn" data-env="dieta" data-mult="0.75">Nutrição / Dieta (-25%)</button>
+        <button type="button" class="env-btn active" data-env="salao" data-pct="100">Salão (100%)</button>
+        <button type="button" class="env-btn" data-env="delivery" data-pct="115">Delivery / Marmita (+15%)</button>
+        <button type="button" class="env-btn" data-env="buffet" data-pct="85">Buffet / Evento (-15%)</button>
+        <button type="button" class="env-btn" data-env="dieta" data-pct="75">Nutrição / Dieta (-25%)</button>
+        <button type="button" class="env-btn" data-env="personalizado">Personalizado</button>
+        <span class="pct-box">
+          <label for="porcentagemInput" style="margin:0;font-size:0.78rem;">Porcentagem:</label>
+          <input
+            id="porcentagemInput"
+            type="number"
+            min="10"
+            max="500"
+            step="1"
+            value="100"
+            aria-label="Porcentagem que vai no prato"
+          />
+          <span>%</span>
+        </span>
       </div>
 
       <div class="actions-row">
@@ -688,7 +732,7 @@
       <article class="section-card">
         <div class="section-head head-teal">
           <h2 id="tituloPrato">Ficha Técnica</h2>
-          <span class="section-pill" id="badgePessoas">4 pessoas · Salão</span>
+          <span class="section-pill" id="badgePessoas">4 pessoas · Salão (100%)</span>
         </div>
         <div class="section-body body-teal">
           <div class="metrics-grid">
@@ -705,7 +749,7 @@
                 <span id="qtdPorcoes">4</span>
                 <button type="button" id="maisBtn" aria-label="Aumentar porções">+</button>
               </div>
-              <div class="metric-sub" id="ambienteLabel">Ambiente: Salão</div>
+              <div class="metric-sub" id="ambienteLabel">Ambiente: Salão (100%)</div>
             </div>
 
             <div class="metric-box">
@@ -794,13 +838,14 @@
   </main>
 
   <script>
-    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v3";
+    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v4";
+    const PCT_STORAGE_KEY = "silene_rodrigues_nutre_pct_custom_v1";
 
-    const AMBIENTES = {
-      salao: { nome: "Salão", mult: 1.0 },
-      delivery: { nome: "Delivery / Marmita", mult: 1.15 },
-      buffet: { nome: "Buffet / Evento", mult: 0.85 },
-      dieta: { nome: "Nutrição / Dieta", mult: 0.75 }
+    const AMBIENTES_FIXOS = {
+      salao: { chave: "salao", nome: "Salão", pct: 100 },
+      delivery: { chave: "delivery", nome: "Delivery / Marmita", pct: 115 },
+      buffet: { chave: "buffet", nome: "Buffet / Evento", pct: 85 },
+      dieta: { chave: "dieta", nome: "Nutrição / Dieta", pct: 75 }
     };
 
     const BASE_PRATOS = {
@@ -983,12 +1028,13 @@
     };
 
     let fichaAtual = null;
-    let ambienteAtual = AMBIENTES.salao;
+    let modoAmbiente = "salao";
     let historico = carregarHistorico();
 
     const gerarBtn = document.getElementById("gerarBtn");
     const pratoInput = document.getElementById("pratoInput");
     const pessoasInput = document.getElementById("pessoasInput");
+    const porcentagemInput = document.getElementById("porcentagemInput");
     const statusMsg = document.getElementById("statusMsg");
     const webRefBox = document.getElementById("webRefBox");
     const resultadoArea = document.getElementById("resultadoArea");
@@ -999,6 +1045,53 @@
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .trim();
+    }
+
+    function obterPorcentagemAtual() {
+      const val = parseFloat(porcentagemInput.value);
+      if (Number.isNaN(val) || val <= 0) return 100;
+      return Math.min(500, Math.max(10, val));
+    }
+
+    function obterMultiplicador() {
+      return obterPorcentagemAtual() / 100;
+    }
+
+    function obterNomeAmbiente() {
+      const pct = obterPorcentagemAtual();
+      if (modoAmbiente === "personalizado") {
+        return `Personalizado (${pct}%)`;
+      }
+      const fixo = AMBIENTES_FIXOS[modoAmbiente] || AMBIENTES_FIXOS.salao;
+      return `${fixo.nome} (${pct}%)`;
+    }
+
+    function sincronizarBotoesAmbiente() {
+      document.querySelectorAll(".env-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.env === modoAmbiente);
+      });
+    }
+
+    function carregarPctSalvo() {
+      try {
+        const salvo = localStorage.getItem(PCT_STORAGE_KEY);
+        if (salvo) {
+          const num = parseFloat(salvo);
+          if (!Number.isNaN(num) && num >= 10 && num <= 500) {
+            porcentagemInput.value = num;
+          }
+        }
+      } catch {
+        // Ignora caso localStorage esteja bloqueado
+      }
+    }
+
+    function salvarPctPersonalizado(pct) {
+      try {
+        localStorage.setItem(PCT_STORAGE_KEY, String(pct));
+      } catch {
+        // Ignora caso localStorage esteja bloqueado
+      }
     }
 
     function carregarHistorico() {
@@ -1261,8 +1354,8 @@
       return resultados;
     }
 
-    function formatarQuantidade(qtdBase, unidade, pessoas, multAmbiente = 1) {
-      const total = qtdBase * pessoas * multAmbiente;
+    function formatarQuantidade(qtdBase, unidade, pessoas, mult = 1) {
+      const total = qtdBase * pessoas * mult;
       if (unidade === "g" && total >= 1000) {
         return `${(total / 1000).toFixed(2).replace(".", ",")} kg`;
       }
@@ -1279,7 +1372,8 @@
       const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
       pessoasInput.value = pessoas;
 
-      const mult = ambienteAtual.mult;
+      const mult = obterMultiplicador();
+      const nomeAmb = obterNomeAmbiente();
       const pesoPorcaoAjustada = Math.round(fichaAtual.pesoPorcaoBase * mult);
       const pesoTotalGramas = Math.round(pesoPorcaoAjustada * pessoas);
       const rendimentoTexto = pesoTotalGramas >= 1000
@@ -1287,11 +1381,11 @@
         : `${pesoTotalGramas} g`;
 
       document.getElementById("tituloPrato").textContent = fichaAtual.nome;
-      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${ambienteAtual.nome}`;
+      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${nomeAmb}`;
       document.getElementById("rendimentoTotal").textContent = rendimentoTexto;
       document.getElementById("fatorCoccao").textContent = `Fator cocção: ${fichaAtual.fatorCoccao.toFixed(2)}`;
       document.getElementById("qtdPorcoes").textContent = pessoas;
-      document.getElementById("ambienteLabel").textContent = `Ambiente: ${ambienteAtual.nome}`;
+      document.getElementById("ambienteLabel").textContent = `Ambiente: ${nomeAmb}`;
       document.getElementById("pesoPorcao").textContent = `${pesoPorcaoAjustada} g`;
       document.getElementById("tempoPreparo").textContent = fichaAtual.tempo;
       document.getElementById("categoriaPrato").textContent = fichaAtual.categoria;
@@ -1380,9 +1474,10 @@
       pessoasInput.value = qtdPessoas;
 
       const chave = normalizar(textoLimpo);
+      const nomeAmb = obterNomeAmbiente();
       gerarBtn.disabled = true;
       gerarBtn.textContent = "Pesquisando na web...";
-      statusMsg.textContent = `Pesquisando "${textoLimpo}" para ${qtdPessoas} pessoa(s) (${ambienteAtual.nome})...`;
+      statusMsg.textContent = `Pesquisando "${textoLimpo}" para ${qtdPessoas} pessoa(s) (${nomeAmb})...`;
       webRefBox.classList.add("hidden");
 
       try {
@@ -1429,9 +1524,9 @@
               .map((r) => `[${r.fonte}] <strong>${r.titulo}</strong> — ${r.trecho}`)
               .join(" | ");
           webRefBox.classList.remove("hidden");
-          statusMsg.textContent = `Ficha montada após pesquisa na web para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${ambienteAtual.nome}).`;
+          statusMsg.textContent = `Ficha montada após pesquisa na web para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${nomeAmb}).`;
         } else {
-          statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${ambienteAtual.nome}).`;
+          statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${nomeAmb}).`;
         }
 
         renderizarFicha();
@@ -1440,7 +1535,7 @@
         fichaAtual = inferirPerfilPorTexto("", textoLimpo);
         renderizarFicha();
         adicionarHistorico(fichaAtual, qtdPessoas);
-        statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${ambienteAtual.nome}).`;
+        statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${nomeAmb}).`;
       } finally {
         gerarBtn.disabled = false;
         gerarBtn.textContent = "Pesquisar e Montar Ficha";
@@ -1449,15 +1544,32 @@
 
     document.querySelectorAll(".env-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".env-btn").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
         const chaveEnv = btn.dataset.env;
-        ambienteAtual = AMBIENTES[chaveEnv] || AMBIENTES.salao;
+        modoAmbiente = chaveEnv;
+        if (chaveEnv === "personalizado") {
+          carregarPctSalvo();
+          porcentagemInput.focus();
+          porcentagemInput.select();
+        } else if (AMBIENTES_FIXOS[chaveEnv]) {
+          porcentagemInput.value = AMBIENTES_FIXOS[chaveEnv].pct;
+        }
+        sincronizarBotoesAmbiente();
         if (fichaAtual) {
           renderizarFicha();
-          statusMsg.textContent = `Porções recalculadas para o ambiente: ${ambienteAtual.nome}.`;
+          statusMsg.textContent = `Porções recalculadas para ${obterNomeAmbiente()}.`;
         }
       });
+    });
+
+    porcentagemInput.addEventListener("input", () => {
+      modoAmbiente = "personalizado";
+      sincronizarBotoesAmbiente();
+      const pct = obterPorcentagemAtual();
+      salvarPctPersonalizado(pct);
+      if (fichaAtual) {
+        renderizarFicha();
+        statusMsg.textContent = `Porcentagem ajustada para ${pct}% (${obterNomeAmbiente()}).`;
+      }
     });
 
     gerarBtn.addEventListener("click", () => {
@@ -1526,13 +1638,13 @@
         return;
       }
       const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
-      const mult = ambienteAtual.mult;
+      const mult = obterMultiplicador();
       const kcalPorcao = Math.round(fichaAtual.nutriPorPorcao.calorias * mult);
 
       const linhas = [
         `*SILENE RODRIGUES NUTRE*`,
         `*Prato:* ${fichaAtual.nome}`,
-        `*Ambiente:* ${ambienteAtual.nome}`,
+        `*Ambiente / Porcentagem:* ${obterNomeAmbiente()}`,
         `*Porções / Pessoas:* ${pessoas}`,
         `*Calorias por porção:* ${kcalPorcao} kcal`,
         "",
