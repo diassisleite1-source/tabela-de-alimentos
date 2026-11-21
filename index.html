@@ -1,1207 +1,1196 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Silene Rodrigues Nutre — Ficha Técnica & Planejamento Nutricional</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter (texto) & Montserrat Black (cabeçalho robusto) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-
-    <!-- Importmap para SDK Oficial @google/genai -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@google/genai": "https://esm.sh/@google/genai@0.1.2"
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silene Rodrigues Nutre — Ficha Técnica de Alimentos</title>
+  <style>
+    :root {
+      --bg: #f6f4f0;
+      --card: #ffffff;
+      --ink: #1e293b;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --slate: #0f172a;
+      --terracotta: #ea580c;
+      --terracotta-dark: #c2410c;
+      --teal: #0f766e;
+      --teal-soft: #f0fdfa;
+      --purple: #5b21b6;
+      --purple-soft: #f5f3ff;
+      --emerald: #065f46;
+      --emerald-soft: #ecfdf5;
+      --amber: #b45309;
+      --amber-soft: #fffbeb;
+      --blue: #1d4ed8;
+      --blue-soft: #eff6ff;
+      --gray-soft: #f1f5f9;
     }
-    </script>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F4F2EE;
-            color: #1E293B;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .font-brand {
-            font-family: 'Montserrat', sans-serif;
-        }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
 
-        /* Remove setas nativas do input numérico */
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+    .container {
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
-        /* Animação suave ao exibir ficha */
-        @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-ficha {
-            animation: fadeSlideUp 0.35s ease-out forwards;
-        }
+    /* Cabeçalho Robusto */
+    .brand-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 65%, #334155 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 22px 20px;
+      border-bottom: 5px solid var(--terracotta);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+    }
 
-        /* Estilos profissionais para Impressão / Salvar PDF */
-        @media print {
-            body {
-                background-color: #FFFFFF !important;
-                color: #000000 !important;
-                font-size: 10.5pt !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-only-header {
-                display: flex !important;
-                border-bottom: 2.5px solid #000000 !important;
-                padding-bottom: 10px !important;
-                margin-bottom: 14px !important;
-            }
-            #fichaContainer {
-                display: block !important;
-                max-width: 100% !important;
-                width: 100% !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .print-card {
-                border: 1.5px solid #000000 !important;
-                border-radius: 0 !important;
-                box-shadow: none !important;
-                background: #FFFFFF !important;
-                margin-bottom: 12px !important;
-            }
-            .print-section-header {
-                background-color: #F3F4F6 !important;
-                color: #000000 !important;
-                border-bottom: 1.5px solid #000000 !important;
-            }
-            .print-section-header * {
-                color: #000000 !important;
-            }
-            .print-badge {
-                border: 1px solid #000000 !important;
-                background: #FFFFFF !important;
-                color: #000000 !important;
-            }
-            .print-break-inside {
-                break-inside: avoid;
-            }
-        }
-    </style>
+    .brand-badge {
+      display: inline-block;
+      background: var(--terracotta);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: clamp(1.7rem, 5.5vw, 2.5rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+      font-size: 0.96rem;
+    }
+
+    /* Painel de Entrada (Apenas 2 caixas principais) */
+    .input-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1.8fr 1fr;
+      }
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      background: #ffffff;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--terracotta);
+    }
+
+    .actions-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      flex: 1 1 200px;
+      background: var(--terracotta);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--terracotta-dark);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: var(--slate);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .quick-picks {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .quick-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .chip {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip:hover {
+      background: #ffedd5;
+    }
+
+    .status-msg {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--teal);
+      min-height: 20px;
+    }
+
+    /* Seções Coloridas em Coluna Única */
+    .hidden {
+      display: none !important;
+    }
+
+    #resultadoArea {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-head {
+      padding: 14px 18px;
+      color: #ffffff;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 800;
+    }
+
+    .section-pill {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .section-body {
+      padding: 16px 18px;
+    }
+
+    /* Azul Petróleo: Rendimento e Porções */
+    .head-teal { background: var(--teal); }
+    .body-teal { background: var(--teal-soft); }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .metrics-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .metric-box {
+      background: #ffffff;
+      border: 1px solid #99f6e4;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .metric-title {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .metric-val {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--slate);
+      margin: 4px 0;
+    }
+
+    .metric-sub {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .stepper button {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--teal);
+      background: #ffffff;
+      color: var(--teal);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .stepper span {
+      font-size: 1.15rem;
+      font-weight: 900;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    /* Roxo: Informações Nutricionais */
+    .head-purple { background: var(--purple); }
+    .body-purple { background: var(--purple-soft); }
+
+    .nutri-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag-purple {
+      background: #ede9fe;
+      color: var(--purple);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .nutri-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .nutri-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .nutri-item {
+      background: #ffffff;
+      border: 1px solid #ddd6fe;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .nutri-name {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--purple);
+      text-transform: uppercase;
+    }
+
+    .nutri-num {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--slate);
+      margin-top: 2px;
+    }
+
+    .nutri-total {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Verde Esmeralda: Ingredientes */
+    .head-emerald { background: var(--emerald); }
+    .body-emerald { background: var(--emerald-soft); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #d1fae5;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #a7f3d0;
+      color: var(--emerald);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Âmbar: Acompanhamentos */
+    .head-amber { background: var(--amber); }
+    .body-amber { background: var(--amber-soft); }
+
+    .acompanhamento-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .acomp-card {
+      background: #ffffff;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .acomp-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .acomp-title {
+      font-weight: 800;
+      color: var(--slate);
+    }
+
+    .acomp-qty {
+      background: #fef3c7;
+      color: var(--amber);
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .acomp-desc {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* Azul Royal: Modo de Preparo e Dicas */
+    .head-blue { background: var(--blue); }
+    .body-blue { background: var(--blue-soft); }
+
+    .steps-list {
+      margin: 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .steps-list li {
+      background: #ffffff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+
+    .tip-box {
+      margin-top: 12px;
+      background: #ffffff;
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      color: var(--slate);
+    }
+
+    /* Histórico */
+    .head-gray { background: #334155; }
+    .body-gray { background: var(--gray-soft); }
+
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .history-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--slate);
+      cursor: pointer;
+    }
+
+    .history-btn:hover {
+      border-color: var(--terracotta);
+      color: var(--terracotta);
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+      .input-card, .actions-row, .quick-picks, .stepper button, .section-gray, .btn-secondary {
+        display: none !important;
+      }
+      .container {
+        max-width: 100%;
+        padding: 0;
+      }
+      .section-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-orange-200 selection:text-orange-950">
+<body>
+  <main class="container">
+    <!-- Cabeçalho Robusto -->
+    <header class="brand-header">
+      <span class="brand-badge">Nutrição &amp; Gastronomia</span>
+      <h1 class="brand-title">Silene Rodrigues Nutre</h1>
+      <p class="brand-subtitle">Ficha técnica de alimentos, rendimento, porções, informações nutricionais e acompanhamentos.</p>
+    </header>
 
-    <!-- Cabeçalho Exclusivo de Impressão / PDF -->
-    <div class="hidden print-only-header items-center justify-between px-2 pt-2">
-        <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-widest text-gray-700">Nutrição & Gastronomia Funcional</p>
-            <h1 class="font-brand font-black text-2xl uppercase tracking-tight text-black">SILENE RODRIGUES NUTRE</h1>
-            <p class="text-xs font-semibold text-gray-700">Ficha Técnica de Alimentos, Rendimento & Informação Nutricional</p>
+    <!-- Apenas 2 Caixas Principais -->
+    <section class="input-card">
+      <form id="fichaForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="pratoInput">1. Nome do Prato</label>
+            <input
+              id="pratoInput"
+              type="text"
+              placeholder="Ex.: Frango grelhado, Feijoada, Strogonoff..."
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="pessoasInput">2. Quantidade de Pessoas</label>
+            <input
+              id="pessoasInput"
+              type="number"
+              min="1"
+              max="500"
+              value="4"
+              required
+            />
+          </div>
         </div>
-        <div class="text-right text-xs text-gray-600">
-            <span class="block font-bold uppercase">Documento Técnico</span>
-            <span id="printDataGeracao"></span>
+
+        <div class="actions-row">
+          <button type="submit" class="btn-primary" id="gerarBtn">Pesquisar e Montar Ficha</button>
+          <button type="button" class="btn-secondary" id="copiarBtn">Copiar WhatsApp</button>
+          <button type="button" class="btn-secondary" id="imprimirBtn">Imprimir / PDF</button>
         </div>
-    </div>
+      </form>
 
-    <div>
-        <!-- CABEÇALHO PRINCIPAL & PAINEL DE BUSCA (Fundo Ardósia #1E293B + Borda Terracota #EA580C) -->
-        <header class="bg-[#1E293B] text-white border-b-4 border-[#EA580C] shadow-lg no-print">
-            <!-- Identidade Visual Robusta -->
-            <div class="bg-slate-950/45 border-b border-slate-700/80">
-                <div class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
-                    <div class="flex items-start sm:items-center gap-3.5 sm:gap-4">
-                        <!-- Ícone Nutricional & Culinário -->
-                        <div class="shrink-0 bg-gradient-to-br from-[#EA580C] to-[#C2410C] text-white p-3 sm:p-3.5 rounded-2xl shadow-md border border-orange-400/30">
-                            <svg class="w-7 h-7 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-                            </svg>
-                        </div>
+      <div class="quick-picks">
+        <span class="quick-label">Exemplos rápidos:</span>
+        <button type="button" class="chip" data-prato="Strogonoff de Frango">Strogonoff de Frango</button>
+        <button type="button" class="chip" data-prato="Feijoada Completa">Feijoada Completa</button>
+        <button type="button" class="chip" data-prato="Frango Grelhado com Legumes">Frango Grelhado</button>
+        <button type="button" class="chip" data-prato="Moqueca de Peixe">Moqueca de Peixe</button>
+        <button type="button" class="chip" data-prato="Baião de Dois">Baião de Dois</button>
+      </div>
 
-                        <div class="min-w-0 flex-1">
-                            <span class="inline-block text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.16em] text-[#FB923C] mb-1">
-                                NUTRIÇÃO &amp; GASTRONOMIA FUNCIONAL
-                            </span>
-                            <h1 class="font-brand font-black text-2xl sm:text-4xl text-white uppercase tracking-tight leading-tight break-words">
-                                SILENE RODRIGUES NUTRE
-                            </h1>
-                            <p class="text-xs sm:text-sm font-medium text-slate-300 mt-1 break-words">
-                                Ficha Técnica de Alimentos, Rendimento &amp; Informação Nutricional
-                            </p>
-                        </div>
-                    </div>
-                </div>
+      <div class="status-msg" id="statusMsg"></div>
+    </section>
+
+    <!-- Área de Resultados (oculta até pesquisar) -->
+    <section id="resultadoArea" class="hidden">
+      <!-- Rendimento e Porções -->
+      <article class="section-card">
+        <div class="section-head head-teal">
+          <h2 id="tituloPrato">Ficha Técnica</h2>
+          <span class="section-pill" id="badgePessoas">4 pessoas</span>
+        </div>
+        <div class="section-body body-teal">
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <div class="metric-title">Rendimento Total</div>
+              <div class="metric-val" id="rendimentoTotal">0 g</div>
+              <div class="metric-sub" id="fatorCoccao">Fator: 1.00</div>
             </div>
 
-            <!-- Painel de Busca (Apenas 2 Campos Principais em Coluna Única Responsiva) -->
-            <section class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-7">
-                <form id="formBuscaPrato" class="space-y-4">
-                    <!-- Campo 1: Nome do Prato -->
-                    <div>
-                        <label for="inputPrato" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-1.5">
-                            1. Nome do Prato
-                        </label>
-                        <div class="relative">
-                            <input
-                                type="text"
-                                id="inputPrato"
-                                required
-                                autocomplete="off"
-                                placeholder="Ex: Strogonoff de Frango, Baião de Dois, Escondidinho de Carne Seca..."
-                                class="w-full bg-white text-slate-900 placeholder-slate-400 text-base font-semibold px-4 py-3.5 rounded-xl border-2 border-transparent focus:border-[#EA580C] focus:ring-4 focus:ring-[#EA580C]/30 outline-none shadow-sm transition-all"
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Campo 2: Quantidade de Pessoas / Porções -->
-                    <div>
-                        <label for="inputPessoas" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-1.5">
-                            2. Quantidade de Pessoas / Porções
-                        </label>
-                        <div class="flex items-center bg-white rounded-xl border-2 border-transparent focus-within:border-[#EA580C] focus-within:ring-4 focus-within:ring-[#EA580C]/30 overflow-hidden shadow-sm">
-                            <button
-                                type="button"
-                                id="btnDiminuirInput"
-                                aria-label="Diminuir pessoas"
-                                class="w-14 h-13 py-3.5 flex items-center justify-center bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-black text-xl transition-colors cursor-pointer"
-                            >
-                                −
-                            </button>
-                            <input
-                                type="number"
-                                id="inputPessoas"
-                                min="1"
-                                max="500"
-                                value="4"
-                                required
-                                class="w-full text-center bg-white text-slate-900 text-lg font-extrabold py-3 outline-none tabular-nums"
-                            >
-                            <button
-                                type="button"
-                                id="btnAumentarInput"
-                                aria-label="Aumentar pessoas"
-                                class="w-14 h-13 py-3.5 flex items-center justify-center bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-black text-xl transition-colors cursor-pointer"
-                            >
-                                +
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Botão Largo de Ação Principal -->
-                    <div class="pt-1">
-                        <button
-                            type="submit"
-                            id="btnGerarFicha"
-                            class="w-full bg-gradient-to-r from-[#EA580C] to-[#D97706] hover:from-[#C2410C] hover:to-[#B45309] active:scale-[0.99] text-white font-extrabold text-base sm:text-lg py-4 px-6 rounded-xl shadow-lg shadow-orange-950/40 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
-                        >
-                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"/>
-                                <path d="m21 21-4.3-4.3"/>
-                            </svg>
-                            <span>Gerar Ficha Técnica na Web</span>
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Pílulas Clicáveis de Exemplos Rápidos -->
-                <div class="mt-5 pt-4 border-t border-slate-700/80">
-                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-                        Sugestões rápidas para testar:
-                    </span>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" data-prato="Strogonoff de Frango" class="btn-exemplo text-xs font-bold bg-slate-800 hover:bg-[#EA580C] text-slate-200 hover:text-white border border-slate-600 hover:border-[#EA580C] px-3 py-2 rounded-full transition-colors cursor-pointer">
-                            Strogonoff de Frango
-                        </button>
-                        <button type="button" data-prato="Baião de Dois" class="btn-exemplo text-xs font-bold bg-slate-800 hover:bg-[#EA580C] text-slate-200 hover:text-white border border-slate-600 hover:border-[#EA580C] px-3 py-2 rounded-full transition-colors cursor-pointer">
-                            Baião de Dois
-                        </button>
-                        <button type="button" data-prato="Escondidinho de Carne Seca" class="btn-exemplo text-xs font-bold bg-slate-800 hover:bg-[#EA580C] text-slate-200 hover:text-white border border-slate-600 hover:border-[#EA580C] px-3 py-2 rounded-full transition-colors cursor-pointer">
-                            Escondidinho de Carne Seca
-                        </button>
-                        <button type="button" data-prato="Moqueca de Peixe Baiana" class="btn-exemplo text-xs font-bold bg-slate-800 hover:bg-[#EA580C] text-slate-200 hover:text-white border border-slate-600 hover:border-[#EA580C] px-3 py-2 rounded-full transition-colors cursor-pointer">
-                            Moqueca de Peixe
-                        </button>
-                        <button type="button" data-prato="Salmão Grelhado com Legumes" class="btn-exemplo text-xs font-bold bg-slate-800 hover:bg-[#EA580C] text-slate-200 hover:text-white border border-slate-600 hover:border-[#EA580C] px-3 py-2 rounded-full transition-colors cursor-pointer">
-                            Salmão com Legumes
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </header>
-
-        <!-- CONTEÚDO PRINCIPAL EM COLUNA ÚNICA (w-full max-w-3xl mx-auto) -->
-        <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-
-            <!-- ESTADO DE CARREGAMENTO (Oculto inicialmente) -->
-            <div id="loadingBox" class="hidden bg-white rounded-2xl border-2 border-orange-200 shadow-sm p-6 sm:p-8 text-center space-y-3 no-print">
-                <div class="w-12 h-12 mx-auto rounded-full border-4 border-orange-200 border-t-[#EA580C] animate-spin"></div>
-                <h2 class="font-brand font-extrabold text-lg sm:text-xl text-slate-900">
-                    Pesquisando na Web &amp; Calculando Nutrição...
-                </h2>
-                <p id="loadingTexto" class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                    Consultando referências culinárias, fatores de cocção e composição nutricional para montar sua ficha técnica.
-                </p>
+            <div class="metric-box">
+              <div class="metric-title">Qtd. de Porções</div>
+              <div class="stepper">
+                <button type="button" id="menosBtn" aria-label="Diminuir porções">−</button>
+                <span id="qtdPorcoes">4</span>
+                <button type="button" id="maisBtn" aria-label="Aumentar porções">+</button>
+              </div>
+              <div class="metric-sub">Ajuste em tempo real</div>
             </div>
 
-            <!-- PAINEL DE RESULTADOS DA FICHA TÉCNICA (100% OCULTO ATÉ GERAR OU SELECIONAR PRATO) -->
-            <div id="fichaContainer" class="hidden grid-cols-1 space-y-5 animate-ficha">
-
-                <!-- 1. CARD DE CABEÇALHO DO PRATO & RENDIMENTO (Tema Azul Petróleo #0F766E) -->
-                <section class="print-card w-full bg-white rounded-2xl shadow-sm border-2 border-[#0F766E] overflow-hidden">
-                    <!-- Topo Azul Petróleo -->
-                    <div class="print-section-header bg-[#0F766E] text-white p-4 sm:p-6 space-y-4">
-                        <div class="space-y-1.5">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="print-badge inline-flex items-center gap-1 bg-white/15 text-teal-50 border border-teal-300/30 text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                                    Ficha Técnica Oficial
-                                </span>
-                                <span id="fichaCategoriaBadge" class="print-badge text-[11px] font-bold bg-teal-950/60 text-teal-100 px-2.5 py-0.5 rounded-full border border-teal-400/30">
-                                    Prato Principal
-                                </span>
-                            </div>
-                            <h2 id="fichaTitulo" class="font-brand font-black text-2xl sm:text-3xl text-white tracking-tight break-words">
-                                Nome do Prato
-                            </h2>
-                            <p class="text-xs sm:text-sm text-teal-100">
-                                Silene Rodrigues Nutre • Rendimento, porcionamento e escalonamento instantâneo
-                            </p>
-                        </div>
-
-                        <!-- Botões de Ação (Empilhados no celular, em linha limpa no desktop) -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 no-print">
-                            <button
-                                type="button"
-                                id="btnCopiarWhatsapp"
-                                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-400 hover:bg-emerald-300 text-slate-950 text-sm font-extrabold rounded-xl shadow-sm transition-colors cursor-pointer"
-                            >
-                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                <span>Copiar p/ WhatsApp</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                onclick="window.print()"
-                                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1E293B] hover:bg-slate-800 text-white text-sm font-bold rounded-xl border border-white/20 shadow-sm transition-colors cursor-pointer"
-                            >
-                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                                <span>Imprimir / PDF</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Grade 2x2 no celular (grid-cols-2 sm:grid-cols-4 gap-3) -->
-                    <div class="p-4 sm:p-6 bg-teal-50/50 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <!-- Métrica 1: Rendimento Total -->
-                        <div class="bg-white border border-teal-200 rounded-xl p-3.5 flex flex-col justify-between shadow-2xs">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-teal-800">
-                                Rendimento Total
-                            </span>
-                            <span id="fichaRendimentoTotal" class="print-badge mt-1.5 text-lg sm:text-xl font-black text-[#0F766E] tabular-nums break-words">
-                                0 kg
-                            </span>
-                            <span class="text-[11px] text-slate-500 mt-1">Peso/volume pronto</span>
-                        </div>
-
-                        <!-- Métrica 2: Quantidade de Porções (com botões - e + grandes e fáceis de tocar) -->
-                        <div class="bg-white border-2 border-[#0F766E] rounded-xl p-3.5 flex flex-col justify-between shadow-2xs">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-teal-900">
-                                Porções
-                            </span>
-                            <div class="mt-1.5 flex items-center justify-between gap-1.5">
-                                <button
-                                    type="button"
-                                    id="btnDiminuirCard"
-                                    aria-label="Diminuir 1 porção"
-                                    class="no-print w-9 h-9 shrink-0 rounded-lg bg-teal-100 hover:bg-[#0F766E] text-[#0F766E] hover:text-white font-black text-lg flex items-center justify-center transition-colors cursor-pointer"
-                                >
-                                    −
-                                </button>
-                                <span id="fichaPorcoes" class="text-sm sm:text-base font-black text-slate-900 text-center tabular-nums leading-tight">
-                                    4 porções
-                                </span>
-                                <button
-                                    type="button"
-                                    id="btnAumentarCard"
-                                    aria-label="Aumentar 1 porção"
-                                    class="no-print w-9 h-9 shrink-0 rounded-lg bg-teal-100 hover:bg-[#0F766E] text-[#0F766E] hover:text-white font-black text-lg flex items-center justify-center transition-colors cursor-pointer"
-                                >
-                                    +
-                                </button>
-                            </div>
-                            <span class="text-[11px] text-teal-700 font-semibold mt-1 no-print">Toque p/ recalcular</span>
-                        </div>
-
-                        <!-- Métrica 3: Peso por Porção -->
-                        <div class="bg-white border border-teal-200 rounded-xl p-3.5 flex flex-col justify-between shadow-2xs">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-teal-800">
-                                Peso / Porção
-                            </span>
-                            <span id="fichaPorcaoIndividual" class="print-badge mt-1.5 text-lg sm:text-xl font-black text-slate-900 tabular-nums break-words">
-                                0 g
-                            </span>
-                            <span class="text-[11px] text-slate-500 mt-1">Porção individual</span>
-                        </div>
-
-                        <!-- Métrica 4: Tempo & Fator Cocção -->
-                        <div class="bg-white border border-teal-200 rounded-xl p-3.5 flex flex-col justify-between shadow-2xs">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-teal-800">
-                                Tempo &amp; Cocção
-                            </span>
-                            <span id="fichaTempoPreparo" class="print-badge mt-1.5 text-base sm:text-lg font-black text-amber-800 break-words">
-                                40 min
-                            </span>
-                            <span id="fichaFatorCoccao" class="text-[11px] font-bold text-teal-900 mt-1 break-words">
-                                FC: 0,90
-                            </span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 2. SEÇÃO 1 — INFORMAÇÕES NUTRICIONAIS & PERFIL DO PRATO (Tema Roxo/Violeta #5B21B6) -->
-                <section class="print-card print-break-inside w-full rounded-2xl shadow-sm border border-violet-200 overflow-hidden bg-[#F5F3FF]">
-                    <div class="print-section-header bg-[#5B21B6] text-white p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <h3 class="font-extrabold text-base sm:text-lg flex items-center gap-2">
-                            <span class="bg-white/15 p-1.5 rounded-lg shrink-0">
-                                <svg class="w-4 h-4 text-violet-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                            </span>
-                            <span>1. Informação Nutricional (por porção)</span>
-                        </h3>
-                        <span id="badgePorcaoNutri" class="print-badge self-start sm:self-auto text-xs font-extrabold text-violet-950 bg-violet-200 px-3 py-1 rounded-full">
-                            1 porção individual
-                        </span>
-                    </div>
-
-                    <div class="p-4 sm:p-6 space-y-4">
-                        <!-- Badges de Perfil Nutricional e Alérgenos -->
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span id="nutriClassificacao" class="print-badge inline-flex items-center gap-1.5 bg-[#5B21B6] text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                                Refeição Equilibrada
-                            </span>
-                            <span id="nutriAlergenos" class="print-badge inline-flex items-center gap-1.5 bg-rose-100 text-rose-900 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-full break-words">
-                                Alérgenos: Verificar ingredientes
-                            </span>
-                        </div>
-
-                        <!-- Grade 2 colunas no celular (grid-cols-2 sm:grid-cols-3 gap-2.5) -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                            <!-- Calorias -->
-                            <div class="bg-white border-2 border-violet-300 rounded-xl p-3.5 text-center shadow-2xs">
-                                <span class="block text-[11px] font-extrabold uppercase tracking-wider text-violet-700">Calorias</span>
-                                <span id="nutriCalorias" class="block text-xl sm:text-2xl font-black text-[#5B21B6] mt-1 tabular-nums">0 kcal</span>
-                                <span id="nutriCaloriasTotal" class="block text-[11px] font-semibold text-slate-500 mt-0.5 tabular-nums">Total: 0 kcal</span>
-                            </div>
-
-                            <!-- Carboidratos -->
-                            <div class="bg-white border border-violet-200 rounded-xl p-3.5 text-center shadow-2xs">
-                                <span class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Carboidratos</span>
-                                <span id="nutriCarboidratos" class="block text-xl sm:text-2xl font-black text-slate-900 mt-1 tabular-nums">0 g</span>
-                                <span class="block text-[11px] text-slate-400 mt-0.5">por porção</span>
-                            </div>
-
-                            <!-- Proteínas -->
-                            <div class="bg-white border border-violet-200 rounded-xl p-3.5 text-center shadow-2xs">
-                                <span class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Proteínas</span>
-                                <span id="nutriProteinas" class="block text-xl sm:text-2xl font-black text-emerald-700 mt-1 tabular-nums">0 g</span>
-                                <span class="block text-[11px] text-slate-400 mt-0.5">por porção</span>
-                            </div>
-
-                            <!-- Gorduras Totais -->
-                            <div class="bg-white border border-violet-200 rounded-xl p-3.5 text-center shadow-2xs">
-                                <span class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Gorduras Totais</span>
-                                <span id="nutriGorduras" class="block text-xl sm:text-2xl font-black text-amber-700 mt-1 tabular-nums">0 g</span>
-                                <span class="block text-[11px] text-slate-400 mt-0.5">por porção</span>
-                            </div>
-
-                            <!-- Fibras -->
-                            <div class="bg-white border border-violet-200 rounded-xl p-3.5 text-center shadow-2xs">
-                                <span class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Fibras</span>
-                                <span id="nutriFibras" class="block text-xl sm:text-2xl font-black text-teal-700 mt-1 tabular-nums">0 g</span>
-                                <span class="block text-[11px] text-slate-400 mt-0.5">por porção</span>
-                            </div>
-
-                            <!-- Sódio -->
-                            <div class="bg-white border border-violet-200 rounded-xl p-3.5 text-center shadow-2xs">
-                                <span class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Sódio</span>
-                                <span id="nutriSodio" class="block text-xl sm:text-2xl font-black text-slate-800 mt-1 tabular-nums">0 mg</span>
-                                <span class="block text-[11px] text-slate-400 mt-0.5">por porção</span>
-                            </div>
-                        </div>
-
-                        <!-- Observação Nutricional -->
-                        <div class="bg-white border border-violet-200 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-slate-700 leading-relaxed break-words">
-                            <p id="nutriObservacao" class="font-medium"></p>
-                            <span class="block text-[11px] text-violet-800/80 italic mt-1.5">
-                                *Estimativa nutricional calculada com base nas tabelas TACO / TBCA para os ingredientes padronizados.
-                            </span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 3. SEÇÃO 2 — INGREDIENTES & QUANTIDADES PROPORCIONAIS (Tema Verde Esmeralda #065F46) -->
-                <section class="print-card w-full rounded-2xl shadow-sm border border-emerald-200 overflow-hidden bg-[#ECFDF5]/60">
-                    <div class="print-section-header bg-[#065F46] text-white p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <h3 class="font-extrabold text-base sm:text-lg flex items-center gap-2">
-                            <span class="bg-white/15 p-1.5 rounded-lg shrink-0">
-                                <svg class="w-4 h-4 text-emerald-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M3 7h18"/><path d="M5 7l-2 9h6l-2-9"/><path d="M19 7l-2 9h6l-2-9"/></svg>
-                            </span>
-                            <span>2. Ingredientes &amp; Quantidades</span>
-                        </h3>
-                        <span id="badgeRecalculo" class="print-badge self-start sm:self-auto text-xs font-extrabold text-emerald-950 bg-emerald-200 px-3 py-1 rounded-full">
-                            Para 4 porções
-                        </span>
-                    </div>
-
-                    <div class="p-4 sm:p-6">
-                        <div id="listaIngredientes" class="divide-y divide-emerald-200/80 bg-white rounded-xl border border-emerald-200 overflow-hidden">
-                            <!-- Itens inseridos dinamicamente -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 4. SEÇÃO 3 — SUGESTÕES DE ACOMPANHAMENTOS & HARMONIZAÇÃO (Tema Âmbar Dourado #B45309) -->
-                <section id="acompanhamentosSection" class="print-card print-break-inside w-full rounded-2xl shadow-sm border border-amber-200 overflow-hidden bg-[#FFFBEB]">
-                    <div class="print-section-header bg-[#B45309] text-white p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <h3 class="font-extrabold text-base sm:text-lg flex items-center gap-2">
-                            <span class="bg-white/15 p-1.5 rounded-lg shrink-0">
-                                <svg class="w-4 h-4 text-amber-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-                            </span>
-                            <span>3. Sugestões de Acompanhamentos</span>
-                        </h3>
-                        <span id="badgeAcompanhamentos" class="print-badge self-start sm:self-auto text-xs font-extrabold text-amber-950 bg-amber-200 px-3 py-1 rounded-full">
-                            Para 4 pessoas
-                        </span>
-                    </div>
-
-                    <div class="p-4 sm:p-6">
-                        <div id="listaAcompanhamentos" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <!-- Cards inseridos dinamicamente -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 5. SEÇÃO 4 — MODO DE PREPARO & DICAS TÉCNICAS (Tema Azul Royal #1D4ED8) -->
-                <section class="print-card print-break-inside w-full rounded-2xl shadow-sm border border-blue-200 overflow-hidden bg-[#EFF6FF]/70">
-                    <div class="print-section-header bg-[#1D4ED8] text-white p-4 sm:p-6">
-                        <h3 class="font-extrabold text-base sm:text-lg flex items-center gap-2">
-                            <span class="bg-white/15 p-1.5 rounded-lg shrink-0">
-                                <svg class="w-4 h-4 text-blue-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                            </span>
-                            <span>4. Modo de Preparo &amp; Dicas</span>
-                        </h3>
-                    </div>
-
-                    <div class="p-4 sm:p-6 space-y-4">
-                        <ol id="listaModoPreparo" class="space-y-3">
-                            <!-- Passos numerados -->
-                        </ol>
-
-                        <div id="caixaDicasChef" class="bg-white border-l-4 border-[#1D4ED8] rounded-xl p-4 shadow-2xs">
-                            <span class="block text-xs font-extrabold uppercase tracking-wider text-[#1D4ED8] mb-1">
-                                Dica Técnica &amp; Rendimento
-                            </span>
-                            <p id="textoDicasChef" class="text-xs sm:text-sm text-slate-700 leading-relaxed break-words"></p>
-                        </div>
-
-                        <!-- Fontes da Pesquisa Web (se disponíveis) -->
-                        <div id="boxFontesWeb" class="hidden pt-2 border-t border-blue-200/80 no-print">
-                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                                Referências consultadas na web:
-                            </span>
-                            <div id="listaFontesWeb" class="flex flex-wrap gap-2"></div>
-                        </div>
-                    </div>
-                </section>
+            <div class="metric-box">
+              <div class="metric-title">Peso por Porção</div>
+              <div class="metric-val" id="pesoPorcao">0 g</div>
+              <div class="metric-sub">Porção média pronta</div>
             </div>
 
-            <!-- 6. HISTÓRICO RECENTE (Tema Cinza Neutro #334155) -->
-            <section id="historicoSection" class="hidden w-full rounded-2xl shadow-sm border border-slate-300 overflow-hidden bg-white no-print">
-                <div class="bg-[#334155] text-white px-4 py-3.5 sm:px-6 flex items-center justify-between">
-                    <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
-                        <svg class="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <span>Fichas Recentes Salvas</span>
-                    </h3>
-                    <button
-                        type="button"
-                        id="btnLimparHistorico"
-                        class="text-xs font-bold text-slate-300 hover:text-white underline cursor-pointer"
-                    >
-                        Limpar
-                    </button>
-                </div>
-                <div id="listaHistorico" class="p-4 sm:p-5 flex flex-wrap gap-2">
-                    <!-- Chips do histórico -->
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- Toast / Mensagem Flutuante (Sem alert/confirm nativos) -->
-    <div id="toastBox" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden max-w-[92vw] sm:max-w-md bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-xl border border-slate-700 text-center">
-        <span id="toastMensagem"></span>
-    </div>
-
-    <!-- Rodapé -->
-    <footer class="bg-white border-t border-slate-200 py-5 mt-8 no-print">
-        <div class="w-full max-w-3xl mx-auto px-4 sm:px-6 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs text-slate-500">
-            <p class="font-extrabold text-slate-800">SILENE RODRIGUES NUTRE</p>
-            <p>Ficha Técnica de Alimentos, Rendimento &amp; Informação Nutricional</p>
+            <div class="metric-box">
+              <div class="metric-title">Tempo Estimado</div>
+              <div class="metric-val" id="tempoPreparo">35 min</div>
+              <div class="metric-sub" id="categoriaPrato">Prato Principal</div>
+            </div>
+          </div>
         </div>
-    </footer>
+      </article>
 
-    <script type="module">
-        import { GoogleGenAI, Type } from "@google/genai";
+      <!-- Informações Nutricionais -->
+      <article class="section-card">
+        <div class="section-head head-purple">
+          <h2>Informações Nutricionais do Prato</h2>
+          <span class="section-pill">Valores por porção</span>
+        </div>
+        <div class="section-body body-purple">
+          <div class="nutri-tags" id="nutriTags"></div>
+          <div class="nutri-grid" id="nutriGrid"></div>
+        </div>
+      </article>
 
-        // Instância do SDK Gemini
-        const apiKey = "";
-        const ai = new GoogleGenAI({ apiKey });
+      <!-- Ingredientes -->
+      <article class="section-card">
+        <div class="section-head head-emerald">
+          <h2>Ingredientes e Quantidades</h2>
+          <span class="section-pill" id="badgeIngredientes">0 itens</span>
+        </div>
+        <div class="section-body body-emerald">
+          <table>
+            <thead>
+              <tr>
+                <th>Ingrediente</th>
+                <th>Quantidade</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody id="ingredientesBody"></tbody>
+          </table>
+        </div>
+      </article>
 
-        // Estado global da ficha atual
-        const HISTORY_KEY = "silene_rodrigues_nutre_v3";
-        let receitaBaseAtual = null;
-        let pessoasBaseIA = 4;
-        let fontesAtuais = [];
+      <!-- Sugestões de Acompanhamentos -->
+      <article class="section-card">
+        <div class="section-head head-amber">
+          <h2>Sugestões de Acompanhamentos</h2>
+          <span class="section-pill">Harmonização</span>
+        </div>
+        <div class="section-body body-amber">
+          <div class="acompanhamento-list" id="acompanhamentosList"></div>
+        </div>
+      </article>
 
-        // Elementos DOM
-        const formBusca = document.getElementById("formBuscaPrato");
-        const inputPrato = document.getElementById("inputPrato");
-        const inputPessoas = document.getElementById("inputPessoas");
-        const btnGerarFicha = document.getElementById("btnGerarFicha");
-        const loadingBox = document.getElementById("loadingBox");
-        const loadingTexto = document.getElementById("loadingTexto");
-        const fichaContainer = document.getElementById("fichaContainer");
+      <!-- Modo de Preparo e Dicas -->
+      <article class="section-card">
+        <div class="section-head head-blue">
+          <h2>Modo de Preparo e Dicas Nutricionais</h2>
+          <span class="section-pill">Execução</span>
+        </div>
+        <div class="section-body body-blue">
+          <ol class="steps-list" id="passosList"></ol>
+          <div class="tip-box" id="dicaBox"></div>
+        </div>
+      </article>
+    </section>
 
-        /**
-         * Exibe notificação toast não-bloqueante
-         */
-        let toastTimer = null;
-        function mostrarToast(mensagem, isErro = false) {
-            const toastBox = document.getElementById("toastBox");
-            const toastMensagem = document.getElementById("toastMensagem");
-            toastMensagem.textContent = mensagem;
-            toastBox.className = `fixed bottom-5 left-1/2 -translate-x-1/2 z-50 max-w-[92vw] sm:max-w-md text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-xl border text-center ${
-                isErro ? "bg-rose-700 border-rose-500" : "bg-slate-900 border-slate-700"
-            }`;
-            toastBox.classList.remove("hidden");
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toastBox.classList.add("hidden");
-            }, 3500);
+    <!-- Histórico Recente -->
+    <section class="section-card section-gray">
+      <div class="section-head head-gray">
+        <h2>Histórico Recente</h2>
+        <span class="section-pill">Acesso rápido</span>
+      </div>
+      <div class="section-body body-gray">
+        <div class="history-list" id="historyList">
+          <span style="font-size:0.85rem;color:#64748b;">Nenhuma ficha gerada ainda nesta sessão.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const BASE_PRATOS = {
+      "strogonoff de frango": {
+        nome: "Strogonoff de Frango",
+        categoria: "Prato Principal",
+        tempo: "35 min",
+        fatorCoccao: 0.88,
+        pesoPorcaoBase: 280,
+        perfil: ["Proteico", "Cremoso"],
+        alergenos: ["Leite/Lactose", "Pode conter mostarda"],
+        nutriPorPorcao: {
+          calorias: 360,
+          carboidratos: 11,
+          proteinas: 31,
+          gorduras: 21,
+          fibras: 1.8,
+          sodio: 640
+        },
+        ingredientesBase: [
+          { nome: "Peito de frango em cubos", qtd: 150, un: "g", obs: "Limpo e sem pele" },
+          { nome: "Creme de leite", qtd: 50, un: "g", obs: "Adicionar ao final sem ferver muito" },
+          { nome: "Molho de tomate", qtd: 45, un: "ml", obs: "De preferência sem adição excessiva de açúcar" },
+          { nome: "Cogumelos fatiados (champignon)", qtd: 25, un: "g", obs: "Escorridos" },
+          { nome: "Cebola picada", qtd: 25, un: "g", obs: "Em cubos pequenos" },
+          { nome: "Azeite ou óleo", qtd: 8, un: "ml", obs: "Para refogar" }
+        ],
+        acompanhamentosBase: [
+          { nome: "Arroz branco ou integral soltinho", qtd: 110, un: "g", motivo: "Equilibra a cremosidade do molho e completa a refeição." },
+          { nome: "Batata palha assada ou tradicional", qtd: 25, un: "g", motivo: "Traz crocância e contraste de textura." },
+          { nome: "Salada verde com folhas e tomate", qtd: 80, un: "g", motivo: "Adiciona fibras, frescor e leveza ao prato." }
+        ],
+        passos: [
+          "Tempere os cubos de frango e doure em fogo médio-alto com azeite para manter a suculência.",
+          "Refogue a cebola até ficar transparente, junte o molho de tomate e os cogumelos.",
+          "Reduza o fogo, incorpore o creme de leite misturando suavemente e desligue antes de ferver forte."
+        ],
+        dica: "Para uma versão mais leve, utilize creme de leite light ou iogurte natural integral sem açúcar e acompanhe com arroz integral e salada crua."
+      },
+      "feijoada completa": {
+        nome: "Feijoada Completa",
+        categoria: "Prato Principal Tradicional",
+        tempo: "1h 50min",
+        fatorCoccao: 1.35,
+        pesoPorcaoBase: 420,
+        perfil: ["Rico em Ferro e Fibras", "Sustentável para grandes grupos"],
+        alergenos: ["Carnes suínas / verificar embutidos"],
+        nutriPorPorcao: {
+          calorias: 540,
+          carboidratos: 38,
+          proteinas: 28,
+          gorduras: 29,
+          fibras: 9.5,
+          sodio: 980
+        },
+        ingredientesBase: [
+          { nome: "Feijão preto cru", qtd: 110, un: "g", obs: "Deixar de molho previamente" },
+          { nome: "Carne seca / charque dessalgada", qtd: 55, un: "g", obs: "Cortada em cubos" },
+          { nome: "Linguiça calabresa defumada", qtd: 45, un: "g", obs: "Em rodelas" },
+          { nome: "Costelinha ou lombo suíno", qtd: 60, un: "g", obs: "Escaldado se necessário" },
+          { nome: "Alho, cebola e folha de louro", qtd: 25, un: "g", obs: "Base aromática" }
+        ],
+        acompanhamentosBase: [
+          { nome: "Couve manteiga refogada fininha", qtd: 70, un: "g", motivo: "Fonte de vitamina C que favorece a absorção do ferro do feijão." },
+          { nome: "Farofa temperada", qtd: 45, un: "g", motivo: "Complementa o caldo e traz textura." },
+          { nome: "Laranja-pera em rodelas ou gomos", qtd: 65, un: "g", motivo: "Auxilia na digestão e na absorção de ferro." },
+          { nome: "Arroz branco cozido", qtd: 100, un: "g", motivo: "Forma a dupla clássica de aminoácidos com o feijão." }
+        ],
+        passos: [
+          "Dessalgue e pré-cozinhe as carnes conforme o corte, reservando os pedaços.",
+          "Cozinhe o feijão preto com louro até amaciar e junte as carnes para apurar o sabor.",
+          "Finalize com refogado de alho e cebola e ajuste o caldo até atingir consistência encorpada."
+        ],
+        dica: "Desengordure a superfície após o cozimento se desejar reduzir gorduras saturadas e sirva sempre com couve e laranja."
+      },
+      "frango grelhado com legumes": {
+        nome: "Frango Grelhado com Legumes",
+        categoria: "Refeição Equilibrada",
+        tempo: "25 min",
+        fatorCoccao: 0.85,
+        pesoPorcaoBase: 320,
+        perfil: ["Alto teor proteico", "Baixo teor de gordura saturada"],
+        alergenos: ["Sem glúten e sem lactose por padrão"],
+        nutriPorPorcao: {
+          calorias: 295,
+          carboidratos: 16,
+          proteinas: 36,
+          gorduras: 9,
+          fibras: 4.5,
+          sodio: 480
+        },
+        ingredientesBase: [
+          { nome: "Filé de frango", qtd: 150, un: "g", obs: "Temperado com ervas, limão, alho e sal moderado" },
+          { nome: "Brócolis em floretes", qtd: 60, un: "g", obs: "Cozidos no vapor al dente" },
+          { nome: "Cenoura em rodelas ou palitos", qtd: 50, un: "g", obs: "Cozida no vapor ou salteada" },
+          { nome: "Abobrinha em meia-lua", qtd: 50, un: "g", obs: "Salteada rapidamente" },
+          { nome: "Azeite extravirgem", qtd: 7, un: "ml", obs: "Para grelhar e finalizar" }
+        ],
+        acompanhamentosBase: [
+          { nome: "Purê de batata-doce ou mandioca", qtd: 100, un: "g", motivo: "Fornece carboidrato complexo de digestão equilibrada." },
+          { nome: "Mix de folhas verdes com limão", qtd: 60, un: "g", motivo: "Aumenta o volume do prato com poucas calorias." }
+        ],
+        passos: [
+          "Aqueça bem a grelha ou frigideira antiaderente com um fio de azeite e grelhe o frango sem virar em excesso.",
+          "Cozinhe os legumes no vapor até ficarem macios, porém firmes, preservando nutrientes.",
+          "Monte o prato distribuindo proteína, legumes e acompanhamento e finalize com ervas frescas."
+        ],
+        dica: "Não cozinhe os legumes em excesso para manter cor viva, textura firme e maior preservação de vitaminas."
+      },
+      "moqueca de peixe": {
+        nome: "Moqueca de Peixe",
+        categoria: "Prato Principal",
+        tempo: "40 min",
+        fatorCoccao: 0.92,
+        pesoPorcaoBase: 340,
+        perfil: ["Fonte de Ômega-3 e Proteínas", "Aromático"],
+        alergenos: ["Peixe"],
+        nutriPorPorcao: {
+          calorias: 330,
+          carboidratos: 10,
+          proteinas: 29,
+          gorduras: 19,
+          fibras: 2.6,
+          sodio: 590
+        },
+        ingredientesBase: [
+          { nome: "Postas ou filés de peixe firme (cação, badejo ou dourado)", qtd: 160, un: "g", obs: "Temperados com limão, alho e sal" },
+          { nome: "Tomate em rodelas", qtd: 55, un: "g", obs: "Maduro e firme" },
+          { nome: "Pimentão e cebola em rodelas", qtd: 45, un: "g", obs: "Cortes uniformes" },
+          { nome: "Leite de coco", qtd: 55, un: "ml", obs: "Adicionado no final" },
+          { nome: "Azeite de dendê", qtd: 8, un: "ml", obs: "Usar com moderação para sabor característico" },
+          { nome: "Coentro e cebolinha", qtd: 10, un: "g", obs: "Picados para finalizar" }
+        ],
+        acompanhamentosBase: [
+          { nome: "Arroz branco soltinho", qtd: 110, un: "g", motivo: "Absorve o caldo temperado da moqueca." },
+          { nome: "Pirão leve ou farofa de mandioca", qtd: 40, un: "g", motivo: "Complementa o sabor regional do prato." }
+        ],
+        passos: [
+          "Faça camadas de cebola, tomate e pimentão no fundo da panela e acomode o peixe por cima.",
+          "Tampe e cozinhe em fogo baixo para que o peixe solte seus sucos sem desmanchar.",
+          "Acrescente o leite de coco e o dendê nos minutos finais, finalize com coentro e sirva."
+        ],
+        dica: "Evite mexer o peixe com colher durante o cozimento; balance suavemente a panela para não quebrar as postas."
+      },
+      "baiao de dois": {
+        nome: "Baião de Dois",
+        categoria: "Prato Único Regional",
+        tempo: "40 min",
+        fatorCoccao: 1.85,
+        pesoPorcaoBase: 330,
+        perfil: ["Prato Completo", "Energético e Proteico"],
+        alergenos: ["Leite/Lactose (queijo coalho/requeijão)"],
+        nutriPorPorcao: {
+          calorias: 415,
+          carboidratos: 46,
+          proteinas: 21,
+          gorduras: 16,
+          fibras: 5.2,
+          sodio: 720
+        },
+        ingredientesBase: [
+          { nome: "Arroz agulhinha ou parboilizado", qtd: 85, un: "g", obs: "Lavado e escorrido" },
+          { nome: "Feijão-verde ou feijão-de-corda cozido", qtd: 95, un: "g", obs: "Escorrido, reservando um pouco do caldo" },
+          { nome: "Queijo coalho em cubos", qtd: 40, un: "g", obs: "Opcionalmente dourado" },
+          { nome: "Carne de sol desfiada ou em cubinhos", qtd: 55, un: "g", obs: "Dessalgada" },
+          { nome: "Nata ou creme de leite", qtd: 25, un: "g", obs: "Para cremosidade" },
+          { nome: "Coentro fresco picado", qtd: 12, un: "g", obs: "Adicionado no final" }
+        ],
+        acompanhamentosBase: [
+          { nome: "Vinagrete fresco de tomate, cebola e pimentão", qtd: 65, un: "g", motivo: "Traz acidez e frescor para equilibrar a densidade do prato." },
+          { nome: "Carne assada ou linguiça artesanal", qtd: 50, un: "g", motivo: "Reforça a porção proteica se desejado." }
+        ],
+        passos: [
+          "Refogue a carne de sol com cebola e alho e acrescente o arroz e o feijão cozido.",
+          "Adicione água quente ou caldo do feijão aos poucos até o arroz cozinhar e ficar macio.",
+          "Misture o queijo coalho, a nata e o coentro no final, deixando descansar por 3 minutos."
+        ],
+        dica: "Controle o sal antes de temperar, pois tanto a carne de sol quanto o queijo coalho já aportam sódio natural."
+      }
+    };
+
+    let fichaAtual = null;
+    const historico = [];
+
+    const form = document.getElementById("fichaForm");
+    const pratoInput = document.getElementById("pratoInput");
+    const pessoasInput = document.getElementById("pessoasInput");
+    const statusMsg = document.getElementById("statusMsg");
+    const resultadoArea = document.getElementById("resultadoArea");
+
+    function normalizar(texto) {
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function gerarFichaGenerica(nomeDigitado) {
+      const limpo = nomeDigitado.trim() || "Prato Personalizado";
+      return {
+        nome: limpo,
+        categoria: "Prato Principal",
+        tempo: "30 min",
+        fatorCoccao: 1.1,
+        pesoPorcaoBase: 300,
+        perfil: ["Ficha Estimada", "Ajustável por Porção"],
+        alergenos: ["Verificar rótulos e ingredientes específicos"],
+        nutriPorPorcao: {
+          calorias: 340,
+          carboidratos: 28,
+          proteinas: 24,
+          gorduras: 14,
+          fibras: 3.5,
+          sodio: 550
+        },
+        ingredientesBase: [
+          { nome: `Ingrediente principal (${limpo})`, qtd: 150, un: "g", obs: "Selecionar e higienizar" },
+          { nome: "Temperos naturais (alho, cebola, ervas)", qtd: 25, un: "g", obs: "Picados a gosto" },
+          { nome: "Azeite ou óleo vegetal", qtd: 8, un: "ml", obs: "Para cocção" },
+          { nome: "Sal e pimenta", qtd: 3, un: "g", obs: "Ajustar com moderação" }
+        ],
+        acompanhamentosBase: [
+          { nome: "Arroz ou cereal cozido", qtd: 100, un: "g", motivo: "Base energética prática para acompanhar o prato." },
+          { nome: "Salada fresca da estação", qtd: 75, un: "g", motivo: "Aporta fibras, vitaminas e equilíbrio ao prato." }
+        ],
+        passos: [
+          `Separe, higienize e pré-prepare todos os ingredientes necessários para ${limpo}.`,
+          "Realize a cocção respeitando a ordem dos ingredientes e o ponto ideal de cada item.",
+          "Ajuste o tempero ao final, divida em porções uniformes e sirva em seguida."
+        ],
+        dica: "Padronize o porcionamento com balança ou concha medida para manter rendimento e valor nutricional constantes."
+      };
+    }
+
+    async function buscarNaWeb(nomePrato) {
+      // Tenta consulta leve na Wikipedia PT como apoio de pesquisa web pública, sem travar caso offline
+      const query = encodeURIComponent(nomePrato.trim());
+      const url = `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${query}&format=json&origin=*`;
+      try {
+        const resp = await fetch(url, { signal: AbortSignal.timeout(2500) });
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        const primeiro = data?.query?.search?.[0];
+        if (!primeiro) return null;
+        return {
+          titulo: primeiro.title,
+          resumo: primeiro.snippet.replace(/<[^>]+>/g, "")
+        };
+      } catch {
+        return null;
+      }
+    }
+
+    function formatarQuantidade(qtdBase, unidade, pessoas) {
+      const total = qtdBase * pessoas;
+      if (unidade === "g" && total >= 1000) {
+        return `${(total / 1000).toFixed(2).replace(".", ",")} kg`;
+      }
+      if (unidade === "ml" && total >= 1000) {
+        return `${(total / 1000).toFixed(2).replace(".", ",")} L`;
+      }
+      const valorFormatado = Number.isInteger(total) ? total : total.toFixed(1).replace(".", ",");
+      return `${valorFormatado} ${unidade}`;
+    }
+
+    function renderizarFicha() {
+      if (!fichaAtual) return;
+
+      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      pessoasInput.value = pessoas;
+
+      const pesoTotalGramas = Math.round(fichaAtual.pesoPorcaoBase * pessoas);
+      const rendimentoTexto = pesoTotalGramas >= 1000
+        ? `${(pesoTotalGramas / 1000).toFixed(2).replace(".", ",")} kg`
+        : `${pesoTotalGramas} g`;
+
+      document.getElementById("tituloPrato").textContent = fichaAtual.nome;
+      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`;
+      document.getElementById("rendimentoTotal").textContent = rendimentoTexto;
+      document.getElementById("fatorCoccao").textContent = `Fator cocção: ${fichaAtual.fatorCoccao.toFixed(2)}`;
+      document.getElementById("qtdPorcoes").textContent = pessoas;
+      document.getElementById("pesoPorcao").textContent = `${fichaAtual.pesoPorcaoBase} g`;
+      document.getElementById("tempoPreparo").textContent = fichaAtual.tempo;
+      document.getElementById("categoriaPrato").textContent = fichaAtual.categoria;
+
+      // Nutrição
+      const tagsEl = document.getElementById("nutriTags");
+      tagsEl.innerHTML = [
+        ...fichaAtual.perfil.map((p) => `<span class="tag-purple">${p}</span>`),
+        ...fichaAtual.alergenos.map((a) => `<span class="tag-purple">Atenção: ${a}</span>`)
+      ].join("");
+
+      const n = fichaAtual.nutriPorPorcao;
+      const itensNutri = [
+        { label: "Calorias", val: `${n.calorias} kcal`, tot: `Total: ${n.calorias * pessoas} kcal` },
+        { label: "Carboidratos", val: `${n.carboidratos} g`, tot: `Total: ${(n.carboidratos * pessoas).toFixed(1)} g` },
+        { label: "Proteínas", val: `${n.proteinas} g`, tot: `Total: ${(n.proteinas * pessoas).toFixed(1)} g` },
+        { label: "Gorduras Totais", val: `${n.gorduras} g`, tot: `Total: ${(n.gorduras * pessoas).toFixed(1)} g` },
+        { label: "Fibras", val: `${n.fibras} g`, tot: `Total: ${(n.fibras * pessoas).toFixed(1)} g` },
+        { label: "Sódio", val: `${n.sodio} mg`, tot: `Total: ${n.sodio * pessoas} mg` }
+      ];
+
+      document.getElementById("nutriGrid").innerHTML = itensNutri
+        .map(
+          (item) => `
+          <div class="nutri-item">
+            <div class="nutri-name">${item.label}</div>
+            <div class="nutri-num">${item.val}</div>
+            <div class="nutri-total">${item.tot}</div>
+          </div>
+        `
+        )
+        .join("");
+
+      // Ingredientes
+      document.getElementById("badgeIngredientes").textContent = `${fichaAtual.ingredientesBase.length} itens`;
+      document.getElementById("ingredientesBody").innerHTML = fichaAtual.ingredientesBase
+        .map(
+          (ing) => `
+          <tr>
+            <td><strong>${ing.nome}</strong></td>
+            <td>${formatarQuantidade(ing.qtd, ing.un, pessoas)}</td>
+            <td>${ing.obs}</td>
+          </tr>
+        `
+        )
+        .join("");
+
+      // Acompanhamentos
+      document.getElementById("acompanhamentosList").innerHTML = fichaAtual.acompanhamentosBase
+        .map(
+          (acomp) => `
+          <div class="acomp-card">
+            <div class="acomp-top">
+              <span class="acomp-title">${acomp.nome}</span>
+              <span class="acomp-qty">${formatarQuantidade(acomp.qtd, acomp.un, pessoas)}</span>
+            </div>
+            <p class="acomp-desc">${acomp.motivo}</p>
+          </div>
+        `
+        )
+        .join("");
+
+      // Modo de preparo e dica
+      document.getElementById("passosList").innerHTML = fichaAtual.passos
+        .map((passo) => `<li>${passo}</li>`)
+        .join("");
+
+      document.getElementById("dicaBox").innerHTML = `<strong>Dica Silene Rodrigues Nutre:</strong> ${fichaAtual.dica}`;
+
+      resultadoArea.classList.remove("hidden");
+    }
+
+    function adicionarHistorico(ficha, pessoas) {
+      const entrada = { nome: ficha.nome, pessoas };
+      const idx = historico.findIndex((h) => normalizar(h.nome) === normalizar(entrada.nome));
+      if (idx > -1) historico.splice(idx, 1);
+      historico.unshift(entrada);
+      if (historico.length > 8) historico.pop();
+
+      const histEl = document.getElementById("historyList");
+      histEl.innerHTML = historico
+        .map(
+          (item, i) => `
+          <button type="button" class="history-btn" data-hist="${i}">
+            ${item.nome} (${item.pessoas}p)
+          </button>
+        `
+        )
+        .join("");
+    }
+
+    async function montarFicha(nomePrato, pessoas) {
+      const chave = normalizar(nomePrato);
+      statusMsg.textContent = `Pesquisando "${nomePrato}" para ${pessoas} pessoa(s)...`;
+
+      let baseEncontrada = BASE_PRATOS[chave];
+      if (!baseEncontrada) {
+        const chaveParcial = Object.keys(BASE_PRATOS).find(
+          (k) => chave.includes(k) || k.includes(chave)
+        );
+        if (chaveParcial) {
+          baseEncontrada = BASE_PRATOS[chaveParcial];
         }
+      }
 
-        /**
-         * Escapa HTML para segurança
-         */
-        function escapeHtml(str) {
-            if (!str) return "";
-            return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;");
+      const infoWeb = await buscarNaWeb(nomePrato);
+
+      if (baseEncontrada) {
+        fichaAtual = {
+          ...baseEncontrada,
+          nome: nomePrato.trim()
+        };
+        statusMsg.textContent = infoWeb
+          ? `Ficha montada com pesquisa web (${infoWeb.titulo}) e base técnica.`
+          : `Ficha montada com cálculo proporcional para ${pessoas} pessoa(s).`;
+      } else {
+        fichaAtual = gerarFichaGenerica(nomePrato);
+        if (infoWeb) {
+          fichaAtual.dica = `${fichaAtual.dica} Referência encontrada: ${infoWeb.resumo}.`;
+          statusMsg.textContent = `Ficha montada após consulta na web para "${infoWeb.titulo}".`;
+        } else {
+          statusMsg.textContent = `Ficha estimada gerada para "${fichaAtual.nome}" (${pessoas} pessoa(s)).`;
         }
+      }
 
-        /**
-         * Formata números nutricionais com 1 casa decimal se necessário
-         */
-        function formatarNumeroNutri(valor) {
-            const num = Number(valor) || 0;
-            if (Number.isInteger(num)) return num.toLocaleString("pt-BR");
-            return num.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-        }
+      renderizarFicha();
+      adicionarHistorico(fichaAtual, pessoas);
+    }
 
-        /**
-         * Converte automaticamente g -> kg e ml -> L quando >= 1000
-         */
-        function formatarMedidaInteligente(valor, unidadeOriginal) {
-            let qtd = Number(valor) || 0;
-            let un = (unidadeOriginal || "g").trim();
-            const unLower = un.toLowerCase();
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nome = pratoInput.value.trim();
+      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      if (!nome) return;
+      montarFicha(nome, pessoas);
+    });
 
-            if (unLower === "g" && qtd >= 1000) {
-                qtd = qtd / 1000;
-                un = "kg";
-            } else if (unLower === "ml" && qtd >= 1000) {
-                qtd = qtd / 1000;
-                un = "L";
-            }
+    pessoasInput.addEventListener("input", () => {
+      if (fichaAtual) renderizarFicha();
+    });
 
-            let valorFormatado;
-            if (un === "kg" || un === "L") {
-                valorFormatado = qtd.toLocaleString("pt-BR", {
-                    minimumFractionDigits: qtd % 1 === 0 ? 0 : 2,
-                    maximumFractionDigits: 2
-                });
-            } else if (qtd < 10 && qtd % 1 !== 0) {
-                valorFormatado = qtd.toLocaleString("pt-BR", {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1
-                });
-            } else {
-                valorFormatado = Math.round(qtd).toLocaleString("pt-BR");
-            }
+    document.getElementById("menosBtn").addEventListener("click", () => {
+      const atual = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      pessoasInput.value = Math.max(1, atual - 1);
+      if (fichaAtual) renderizarFicha();
+    });
 
-            return { valor: valorFormatado, unidade: un };
-        }
+    document.getElementById("maisBtn").addEventListener("click", () => {
+      const atual = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      pessoasInput.value = atual + 1;
+      if (fichaAtual) renderizarFicha();
+    });
 
-        /**
-         * Chamada com Exponential Backoff para resiliência
-         */
-        async function chamarGeminiComRetry(fnCall, maxTentativas = 3) {
-            let atraso = 1000;
-            for (let tentativa = 1; tentativa <= maxTentativas; tentativa++) {
-                try {
-                    return await fnCall();
-                } catch (err) {
-                    if (tentativa === maxTentativas) throw err;
-                    await new Promise(resolve => setTimeout(resolve, atraso));
-                    atraso *= 2;
-                }
-            }
-        }
+    document.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const prato = btn.dataset.prato;
+        const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 4);
+        pratoInput.value = prato;
+        montarFicha(prato, pessoas);
+      });
+    });
 
-        /**
-         * Consulta Gemini 3 Flash com Google Search + JSON Schema Estruturado
-         */
-        async function pesquisarFichaTecnicaNaWeb(nomePrato, qtdPessoas) {
-            const systemInstruction = `Você é um Nutricionista Clínico, Chef Executivo e Engenheiro de Alimentos especialista em Fichas Técnicas Gastronômicas e Planejamento Nutricional para o sistema "Silene Rodrigues Nutre".
-Pesquise na web referências culinárias e tabelas nutricionais (TACO/TBCA) para o prato solicitado e monte uma ficha técnica completa, padronizada e precisa para exatamente ${qtdPessoas} ${qtdPessoas === 1 ? "pessoa/porção" : "pessoas/porções"}.
-Regras:
-1. Calcule quantidades líquidas exatas dos ingredientes proporcionais ao número de porções solicitado.
-2. Padronize unidades sempre que possível em 'g' ou 'ml' para permitir escalonamento matemático preciso, usando 'un', 'colher (sopa)', 'colher (chá)' ou 'dente' apenas quando fizer mais sentido.
-3. Forneça pesoTotalGramas (rendimento total pronto em g/ml para todas as porções), porcaoIndividualGramas (peso/volume de 1 porção) e fatorRendimentoCoccao (ex: "FC: 0,90 • Rendimento 90%").
-4. Calcule a tabela nutricional POR 1 PORÇÃO INDIVIDUAL: caloriasKcal, carboidratosG, proteinasG, gordurasTotaisG, fibrasG, sodioMg, classificacao (ex: "Rico em Proteínas", "Refeição Equilibrada"), alergenos (ex: "Contém Lactose • Sem Glúten") e observacaoNutricional.
-5. Inclua observação prática de corte/pré-preparo para cada ingrediente.
-6. Sugira de 3 a 4 acompanhamentos harmonizados com quantidade proporcional para as ${qtdPessoas} pessoas e breve explicação nutricional/gastronômica.`;
+    document.getElementById("historyList").addEventListener("click", (e) => {
+      const btn = e.target.closest(".history-btn");
+      if (!btn) return;
+      const item = historico[Number(btn.dataset.hist)];
+      if (!item) return;
+      pratoInput.value = item.nome;
+      pessoasInput.value = item.pessoas;
+      montarFicha(item.nome, item.pessoas);
+    });
 
-            const userQuery = `Pesquise na web a receita padronizada e os dados nutricionais do prato "${nomePrato}" e gere a ficha técnica completa para ${qtdPessoas} ${qtdPessoas === 1 ? "pessoa/porção" : "pessoas/porções"}.`;
+    document.getElementById("copiarBtn").addEventListener("click", async () => {
+      if (!fichaAtual) {
+        statusMsg.textContent = "Pesquise um prato primeiro para copiar a ficha.";
+        return;
+      }
+      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      const linhas = [
+        `*SILENE RODRIGUES NUTRE*`,
+        `*Prato:* ${fichaAtual.nome}`,
+        `*Porções / Pessoas:* ${pessoas}`,
+        `*Calorias por porção:* ${fichaAtual.nutriPorPorcao.calorias} kcal`,
+        "",
+        "*Ingredientes:*"
+      ];
+      fichaAtual.ingredientesBase.forEach((ing) => {
+        linhas.push(`• ${ing.nome}: ${formatarQuantidade(ing.qtd, ing.un, pessoas)}`);
+      });
+      linhas.push("", "*Acompanhamentos:*");
+      fichaAtual.acompanhamentosBase.forEach((ac) => {
+        linhas.push(`• ${ac.nome}: ${formatarQuantidade(ac.qtd, ac.un, pessoas)}`);
+      });
 
-            const responseSchema = {
-                type: Type.OBJECT,
-                properties: {
-                    nomeOficial: { type: Type.STRING },
-                    categoria: { type: Type.STRING },
-                    tempoPreparo: { type: Type.STRING },
-                    pesoTotalGramas: { type: Type.NUMBER },
-                    porcaoIndividualGramas: { type: Type.NUMBER },
-                    fatorRendimentoCoccao: { type: Type.STRING },
-                    informacaoNutricional: {
-                        type: Type.OBJECT,
-                        properties: {
-                            caloriasKcal: { type: Type.NUMBER },
-                            carboidratosG: { type: Type.NUMBER },
-                            proteinasG: { type: Type.NUMBER },
-                            gordurasTotaisG: { type: Type.NUMBER },
-                            fibrasG: { type: Type.NUMBER },
-                            sodioMg: { type: Type.NUMBER },
-                            classificacao: { type: Type.STRING },
-                            alergenos: { type: Type.STRING },
-                            observacaoNutricional: { type: Type.STRING }
-                        },
-                        required: [
-                            "caloriasKcal",
-                            "carboidratosG",
-                            "proteinasG",
-                            "gordurasTotaisG",
-                            "fibrasG",
-                            "sodioMg",
-                            "classificacao",
-                            "alergenos",
-                            "observacaoNutricional"
-                        ]
-                    },
-                    ingredientes: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.OBJECT,
-                            properties: {
-                                nome: { type: Type.STRING },
-                                quantidade: { type: Type.NUMBER },
-                                unidade: { type: Type.STRING },
-                                observacao: { type: Type.STRING }
-                            },
-                            required: ["nome", "quantidade", "unidade", "observacao"]
-                        }
-                    },
-                    acompanhamentos: {
-                        type: Type.ARRAY,
-                        items: {
-                            type: Type.OBJECT,
-                            properties: {
-                                nome: { type: Type.STRING },
-                                tipo: { type: Type.STRING },
-                                quantidade: { type: Type.NUMBER },
-                                unidade: { type: Type.STRING },
-                                motivoHarmonizacao: { type: Type.STRING }
-                            },
-                            required: ["nome", "tipo", "quantidade", "unidade", "motivoHarmonizacao"]
-                        }
-                    },
-                    modoPreparo: {
-                        type: Type.ARRAY,
-                        items: { type: Type.STRING }
-                    },
-                    dicasChef: { type: Type.STRING }
-                },
-                required: [
-                    "nomeOficial",
-                    "categoria",
-                    "tempoPreparo",
-                    "pesoTotalGramas",
-                    "porcaoIndividualGramas",
-                    "fatorRendimentoCoccao",
-                    "informacaoNutricional",
-                    "ingredientes",
-                    "acompanhamentos",
-                    "modoPreparo",
-                    "dicasChef"
-                ]
-            };
+      try {
+        await navigator.clipboard.writeText(linhas.join("\n"));
+        statusMsg.textContent = "Ficha copiada para a área de transferência (pronta para WhatsApp).";
+      } catch {
+        statusMsg.textContent = "Não foi possível copiar automaticamente neste navegador.";
+      }
+    });
 
-            const response = await chamarGeminiComRetry(() =>
-                ai.models.generateContent({
-                    model: "gemini-3-flash-preview",
-                    contents: userQuery,
-                    config: {
-                        systemInstruction,
-                        tools: [{ googleSearch: {} }],
-                        responseMimeType: "application/json",
-                        responseSchema
-                    }
-                })
-            );
-
-            const textoJson = response.text;
-            if (!textoJson) {
-                throw new Error("Resposta vazia do modelo.");
-            }
-
-            const dadosFicha = JSON.parse(textoJson);
-
-            // Extrai fontes da pesquisa web (groundingMetadata)
-            const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-            const sources = chunks
-                .map(c => ({
-                    uri: c.web?.uri,
-                    title: c.web?.title
-                }))
-                .filter(s => s.uri && s.title);
-
-            return { dadosFicha, sources };
-        }
-
-        /**
-         * Renderiza a ficha técnica na tela recalculando proporcionalmente
-         */
-        function renderizarFichaCalculada(ficha, qtdPessoasAlvo, sources = []) {
-            const fator = qtdPessoasAlvo / (pessoasBaseIA || 1);
-
-            // Data no cabeçalho de impressão
-            document.getElementById("printDataGeracao").textContent = new Date().toLocaleDateString("pt-BR");
-
-            // Cabeçalho do Prato
-            document.getElementById("fichaTitulo").textContent = ficha.nomeOficial || "Prato Selecionado";
-            document.getElementById("fichaCategoriaBadge").textContent = ficha.categoria || "Prato Principal";
-            document.getElementById("fichaPorcoes").textContent = `${qtdPessoasAlvo} ${qtdPessoasAlvo === 1 ? "porção" : "porções"}`;
-            document.getElementById("badgeRecalculo").textContent = `Para ${qtdPessoasAlvo} ${qtdPessoasAlvo === 1 ? "porção" : "porções"}`;
-            document.getElementById("badgeAcompanhamentos").textContent = `Para ${qtdPessoasAlvo} ${qtdPessoasAlvo === 1 ? "pessoa" : "pessoas"}`;
-
-            // Rendimento & Porcionamento
-            const pesoTotalAtual = (Number(ficha.pesoTotalGramas) || 0) * fator;
-            const rendimentoFormatado = pesoTotalAtual >= 1000
-                ? `${(pesoTotalAtual / 1000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg`
-                : `${Math.round(pesoTotalAtual).toLocaleString("pt-BR")} g`;
-
-            const porcaoIndiv = Number(ficha.porcaoIndividualGramas) || (qtdPessoasAlvo > 0 ? Math.round(pesoTotalAtual / qtdPessoasAlvo) : 0);
-
-            document.getElementById("fichaRendimentoTotal").textContent = rendimentoFormatado;
-            document.getElementById("fichaPorcaoIndividual").textContent = `${Math.round(porcaoIndiv).toLocaleString("pt-BR")} g`;
-            document.getElementById("fichaTempoPreparo").textContent = ficha.tempoPreparo || "40 min";
-            document.getElementById("fichaFatorCoccao").textContent = ficha.fatorRendimentoCoccao || "FC: 0,90";
-
-            // Informação Nutricional (por porção + total da receita)
-            const nutri = ficha.informacaoNutricional || {};
-            const kcalPorcao = Math.round(Number(nutri.caloriasKcal) || 0);
-            const kcalTotalReceita = Math.round(kcalPorcao * qtdPessoasAlvo);
-
-            document.getElementById("badgePorcaoNutri").textContent = `Porção (${Math.round(porcaoIndiv)} g)`;
-            document.getElementById("nutriCalorias").textContent = `${kcalPorcao.toLocaleString("pt-BR")} kcal`;
-            document.getElementById("nutriCaloriasTotal").textContent = `Total: ${kcalTotalReceita.toLocaleString("pt-BR")} kcal`;
-            document.getElementById("nutriCarboidratos").textContent = `${formatarNumeroNutri(nutri.carboidratosG)} g`;
-            document.getElementById("nutriProteinas").textContent = `${formatarNumeroNutri(nutri.proteinasG)} g`;
-            document.getElementById("nutriGorduras").textContent = `${formatarNumeroNutri(nutri.gordurasTotaisG)} g`;
-            document.getElementById("nutriFibras").textContent = `${formatarNumeroNutri(nutri.fibrasG)} g`;
-            document.getElementById("nutriSodio").textContent = `${Math.round(Number(nutri.sodioMg) || 0).toLocaleString("pt-BR")} mg`;
-
-            document.getElementById("nutriClassificacao").textContent = nutri.classificacao || "Refeição Equilibrada";
-            document.getElementById("nutriAlergenos").textContent = `Alérgenos: ${nutri.alergenos || "Verificar ingredientes"}`;
-            document.getElementById("nutriObservacao").textContent =
-                nutri.observacaoNutricional || "Composição nutricional equilibrada baseada nos ingredientes padrão da preparação.";
-
-            // Lista Limpa de Ingredientes (Mobile-First: nome + corte à esquerda, quantidade à direita)
-            const listaIngredientesEl = document.getElementById("listaIngredientes");
-            listaIngredientesEl.innerHTML = (ficha.ingredientes || [])
-                .map((ing, idx) => {
-                    const { valor, unidade } = formatarMedidaInteligente((Number(ing.quantidade) || 0) * fator, ing.unidade);
-                    const bgZebra = idx % 2 === 1 ? "bg-emerald-50/40" : "bg-white";
-                    return `
-                        <div class="${bgZebra} px-4 py-3.5 flex items-center justify-between gap-3">
-                            <div class="min-w-0 flex-1">
-                                <p class="font-bold text-sm sm:text-base text-slate-900 break-words">
-                                    ${escapeHtml(ing.nome)}
-                                </p>
-                                ${
-                                    ing.observacao
-                                        ? `<span class="inline-block mt-0.5 text-xs font-medium text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md break-words">${escapeHtml(ing.observacao)}</span>`
-                                        : ""
-                                }
-                            </div>
-                            <div class="shrink-0 text-right">
-                                <span class="print-badge inline-block bg-[#065F46] text-white font-extrabold text-sm sm:text-base px-3 py-1 rounded-lg tabular-nums">
-                                    ${escapeHtml(valor)} ${escapeHtml(unidade)}
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                })
-                .join("");
-
-            // Sugestões de Acompanhamentos
-            const listaAcompEl = document.getElementById("listaAcompanhamentos");
-            const acompanhamentos = ficha.acompanhamentos || [];
-            if (acompanhamentos.length > 0) {
-                document.getElementById("acompanhamentosSection").classList.remove("hidden");
-                listaAcompEl.innerHTML = acompanhamentos
-                    .map(acomp => {
-                        const { valor, unidade } = formatarMedidaInteligente((Number(acomp.quantidade) || 0) * fator, acomp.unidade || "g");
-                        return `
-                            <div class="bg-white border border-amber-200 rounded-xl p-4 flex flex-col justify-between gap-2.5 shadow-2xs">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div class="min-w-0">
-                                        <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md mb-1">
-                                            ${escapeHtml(acomp.tipo || "Acompanhamento")}
-                                        </span>
-                                        <h4 class="font-extrabold text-sm sm:text-base text-slate-900 break-words">
-                                            ${escapeHtml(acomp.nome)}
-                                        </h4>
-                                    </div>
-                                    <span class="print-badge shrink-0 bg-[#B45309] text-white text-xs sm:text-sm font-extrabold px-2.5 py-1 rounded-lg tabular-nums">
-                                        ${escapeHtml(valor)} ${escapeHtml(unidade)}
-                                    </span>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed break-words">
-                                    ${escapeHtml(acomp.motivoHarmonizacao)}
-                                </p>
-                            </div>
-                        `;
-                    })
-                    .join("");
-            } else {
-                document.getElementById("acompanhamentosSection").classList.add("hidden");
-            }
-
-            // Modo de Preparo
-            const listaPreparoEl = document.getElementById("listaModoPreparo");
-            listaPreparoEl.innerHTML = (ficha.modoPreparo || [])
-                .map(
-                    (passo, index) => `
-                    <li class="bg-white border border-blue-200/80 rounded-xl p-3.5 sm:p-4 flex items-start gap-3 shadow-2xs">
-                        <span class="print-badge shrink-0 w-7 h-7 rounded-full bg-[#1D4ED8] text-white font-extrabold text-xs flex items-center justify-center mt-0.5">
-                            ${index + 1}
-                        </span>
-                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed break-words flex-1">
-                            ${escapeHtml(passo)}
-                        </p>
-                    </li>
-                `
-                )
-                .join("");
-
-            // Dicas Técnicas
-            document.getElementById("textoDicasChef").textContent =
-                ficha.dicasChef || "Mantenha o controle de temperatura e ajuste o sal ao final da cocção.";
-
-            // Fontes da Web
-            const boxFontes = document.getElementById("boxFontesWeb");
-            const listaFontes = document.getElementById("listaFontesWeb");
-            if (sources && sources.length > 0) {
-                const unicas = [];
-                const vistos = new Set();
-                for (const s of sources) {
-                    if (!vistos.has(s.uri)) {
-                        vistos.add(s.uri);
-                        unicas.push(s);
-                    }
-                    if (unicas.length >= 3) break;
-                }
-                listaFontes.innerHTML = unicas
-                    .map(
-                        s => `
-                        <a href="${escapeHtml(s.uri)}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-semibold text-blue-700 hover:text-blue-900 bg-white border border-blue-200 px-2.5 py-1 rounded-lg truncate max-w-full">
-                            ${escapeHtml(s.title)}
-                        </a>
-                    `
-                    )
-                    .join("");
-                boxFontes.classList.remove("hidden");
-            } else {
-                boxFontes.classList.add("hidden");
-            }
-
-            // Exibe o painel de resultados (antes oculto)
-            fichaContainer.classList.remove("hidden");
-            fichaContainer.classList.add("grid");
-        }
-
-        /**
-         * Executa a busca e exibição de uma ficha técnica
-         */
-        async function executarGeracao(nomePrato, qtdPessoas) {
-            const pratoLimpo = (nomePrato || "").trim();
-            const pessoasValidas = Math.max(1, Math.min(500, parseInt(qtdPessoas, 10) || 4));
-
-            if (!pratoLimpo) {
-                mostrarToast("Digite o nome de um prato para pesquisar.", true);
-                inputPrato.focus();
-                return;
-            }
-
-            inputPrato.value = pratoLimpo;
-            inputPessoas.value = pessoasValidas;
-
-            // Mostra loading e oculta resultado anterior
-            btnGerarFicha.disabled = true;
-            btnGerarFicha.classList.add("opacity-70", "cursor-not-allowed");
-            fichaContainer.classList.add("hidden");
-            fichaContainer.classList.remove("grid");
-            loadingTexto.textContent = `Pesquisando na web a ficha técnica e tabela nutricional de "${pratoLimpo}" para ${pessoasValidas} ${pessoasValidas === 1 ? "pessoa" : "pessoas"}...`;
-            loadingBox.classList.remove("hidden");
-
-            try {
-                const { dadosFicha, sources } = await pesquisarFichaTecnicaNaWeb(pratoLimpo, pessoasValidas);
-                receitaBaseAtual = dadosFicha;
-                pessoasBaseIA = pessoasValidas;
-                fontesAtuais = sources;
-
-                renderizarFichaCalculada(receitaBaseAtual, pessoasValidas, fontesAtuais);
-                salvarNoHistorico(dadosFicha, pessoasValidas, sources);
-
-                loadingBox.classList.add("hidden");
-                fichaContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-            } catch (erro) {
-                console.error(erro);
-                loadingBox.classList.add("hidden");
-                mostrarToast("Não foi possível consultar o prato agora. Tente novamente.", true);
-            } finally {
-                btnGerarFicha.disabled = false;
-                btnGerarFicha.classList.remove("opacity-70", "cursor-not-allowed");
-            }
-        }
-
-        /**
-         * Altera a quantidade de pessoas/porções e recalcula instantaneamente sem nova chamada à API
-         */
-        function alterarPessoas(delta) {
-            const atual = parseInt(inputPessoas.value, 10) || 4;
-            const novoValor = Math.max(1, Math.min(500, atual + delta));
-            inputPessoas.value = novoValor;
-
-            if (receitaBaseAtual) {
-                renderizarFichaCalculada(receitaBaseAtual, novoValor, fontesAtuais);
-            }
-        }
-
-        /**
-         * Copia a ficha técnica formatada para WhatsApp (com fallback seguro para iFrame)
-         */
-        function copiarParaWhatsApp() {
-            if (!receitaBaseAtual) return;
-
-            const qtdPessoasAlvo = Math.max(1, parseInt(inputPessoas.value, 10) || pessoasBaseIA);
-            const fator = qtdPessoasAlvo / (pessoasBaseIA || 1);
-
-            const pesoTotalAtual = (Number(receitaBaseAtual.pesoTotalGramas) || 0) * fator;
-            const rendimentoFmt = pesoTotalAtual >= 1000
-                ? `${(pesoTotalAtual / 1000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg`
-                : `${Math.round(pesoTotalAtual).toLocaleString("pt-BR")} g`;
-            const porcaoIndiv = Math.round(Number(receitaBaseAtual.porcaoIndividualGramas) || (pesoTotalAtual / qtdPessoasAlvo));
-            const nutri = receitaBaseAtual.informacaoNutricional || {};
-
-            const linhas = [
-                `*SILENE RODRIGUES NUTRE*`,
-                `_Ficha Técnica & Planejamento Nutricional_`,
-                `--------------------------------`,
-                `*Prato:* ${receitaBaseAtual.nomeOficial}`,
-                `*Rendimento Total:* ${rendimentoFmt}`,
-                `*Porções:* ${qtdPessoasAlvo} ${qtdPessoasAlvo === 1 ? "porção" : "porções"} (${porcaoIndiv} g/porção)`,
-                ``,
-                `*INFORMAÇÃO NUTRICIONAL (1 Porção):*`,
-                `• Calorias: *${Math.round(Number(nutri.caloriasKcal) || 0)} kcal* | Carboidratos: *${formatarNumeroNutri(nutri.carboidratosG)} g*`,
-                `• Proteínas: *${formatarNumeroNutri(nutri.proteinasG)} g* | Gorduras: *${formatarNumeroNutri(nutri.gordurasTotaisG)} g*`,
-                `• Fibras: *${formatarNumeroNutri(nutri.fibrasG)} g* | Sódio: *${Math.round(Number(nutri.sodioMg) || 0)} mg*`,
-                ``,
-                `*INGREDIENTES & QUANTIDADES:*`
-            ];
-
-            (receitaBaseAtual.ingredientes || []).forEach(ing => {
-                const { valor, unidade } = formatarMedidaInteligente((Number(ing.quantidade) || 0) * fator, ing.unidade);
-                const obs = ing.observacao ? ` (${ing.observacao})` : "";
-                linhas.push(`• ${ing.nome}: *${valor} ${unidade}*${obs}`);
-            });
-
-            if (Array.isArray(receitaBaseAtual.acompanhamentos) && receitaBaseAtual.acompanhamentos.length > 0) {
-                linhas.push(``);
-                linhas.push(`*SUGESTÕES DE ACOMPANHAMENTOS:*`);
-                receitaBaseAtual.acompanhamentos.forEach(acomp => {
-                    const { valor, unidade } = formatarMedidaInteligente((Number(acomp.quantidade) || 0) * fator, acomp.unidade || "g");
-                    linhas.push(`• ${acomp.nome}: *${valor} ${unidade}*`);
-                });
-            }
-
-            const textoFinal = linhas.join("\n");
-
-            const textareaTemp = document.createElement("textarea");
-            textareaTemp.value = textoFinal;
-            textareaTemp.style.position = "fixed";
-            textareaTemp.style.opacity = "0";
-            document.body.appendChild(textareaTemp);
-            textareaTemp.select();
-
-            try {
-                document.execCommand("copy");
-                mostrarToast("Ficha técnica copiada! Pronta para colar no WhatsApp.");
-            } catch (e) {
-                mostrarToast("Não foi possível copiar automaticamente.", true);
-            } finally {
-                document.body.removeChild(textareaTemp);
-            }
-        }
-
-        /**
-         * Gerenciamento de Histórico no localStorage
-         */
-        function obterHistorico() {
-            try {
-                return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-            } catch {
-                return [];
-            }
-        }
-
-        function salvarNoHistorico(ficha, pessoas, sources) {
-            const lista = obterHistorico().filter(
-                item => item.ficha?.nomeOficial?.toLowerCase() !== ficha.nomeOficial?.toLowerCase()
-            );
-            lista.unshift({
-                ficha,
-                pessoas,
-                sources,
-                data: new Date().toISOString()
-            });
-            try {
-                localStorage.setItem(HISTORY_KEY, JSON.stringify(lista.slice(0, 8)));
-            } catch (e) {
-                console.warn("Erro ao salvar histórico:", e);
-            }
-            renderizarHistorico();
-        }
-
-        function renderizarHistorico() {
-            const lista = obterHistorico();
-            const sec = document.getElementById("historicoSection");
-            const container = document.getElementById("listaHistorico");
-
-            if (!lista.length) {
-                sec.classList.add("hidden");
-                return;
-            }
-
-            sec.classList.remove("hidden");
-            container.innerHTML = lista
-                .map(
-                    (item, idx) => `
-                    <button
-                        type="button"
-                        data-hist-idx="${idx}"
-                        class="btn-historico text-xs font-bold bg-slate-100 hover:bg-[#1E293B] text-slate-800 hover:text-white border border-slate-300 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
-                    >
-                        ${escapeHtml(item.ficha.nomeOficial)} (${item.pessoas}p)
-                    </button>
-                `
-                )
-                .join("");
-
-            container.querySelectorAll(".btn-historico").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const idx = parseInt(btn.getAttribute("data-hist-idx"), 10);
-                    const item = obterHistorico()[idx];
-                    if (item) {
-                        receitaBaseAtual = item.ficha;
-                        pessoasBaseIA = item.pessoas || 4;
-                        fontesAtuais = item.sources || [];
-                        inputPrato.value = item.ficha.nomeOficial;
-                        inputPessoas.value = pessoasBaseIA;
-                        renderizarFichaCalculada(receitaBaseAtual, pessoasBaseIA, fontesAtuais);
-                        fichaContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                });
-            });
-        }
-
-        // Eventos da Interface
-        formBusca.addEventListener("submit", e => {
-            e.preventDefault();
-            executarGeracao(inputPrato.value, inputPessoas.value);
-        });
-
-        document.getElementById("btnDiminuirInput").addEventListener("click", () => alterarPessoas(-1));
-        document.getElementById("btnAumentarInput").addEventListener("click", () => alterarPessoas(1));
-        document.getElementById("btnDiminuirCard").addEventListener("click", () => alterarPessoas(-1));
-        document.getElementById("btnAumentarCard").addEventListener("click", () => alterarPessoas(1));
-
-        inputPessoas.addEventListener("change", () => {
-            const val = Math.max(1, Math.min(500, parseInt(inputPessoas.value, 10) || 4));
-            inputPessoas.value = val;
-            if (receitaBaseAtual) {
-                renderizarFichaCalculada(receitaBaseAtual, val, fontesAtuais);
-            }
-        });
-
-        document.querySelectorAll(".btn-exemplo").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const prato = btn.getAttribute("data-prato");
-                inputPrato.value = prato;
-                executarGeracao(prato, inputPessoas.value);
-            });
-        });
-
-        document.getElementById("btnCopiarWhatsapp").addEventListener("click", copiarParaWhatsApp);
-
-        document.getElementById("btnLimparHistorico").addEventListener("click", () => {
-            localStorage.removeItem(HISTORY_KEY);
-            renderizarHistorico();
-            mostrarToast("Histórico limpo.");
-        });
-
-        // Inicializa apenas o histórico salvo (mantendo o painel de resultados oculto até a pesquisa)
-        renderizarHistorico();
-    </script>
+    document.getElementById("imprimirBtn").addEventListener("click", () => {
+      if (!fichaAtual) {
+        statusMsg.textContent = "Pesquise um prato primeiro para imprimir.";
+        return;
+      }
+      window.print();
+    });
+  </script>
 </body>
 </html>
