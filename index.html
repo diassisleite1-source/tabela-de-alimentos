@@ -25,6 +25,8 @@
       --blue: #1d4ed8;
       --blue-soft: #eff6ff;
       --gray-soft: #f1f5f9;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
     }
 
     * {
@@ -141,7 +143,7 @@
     }
 
     .btn-primary {
-      flex: 1 1 200px;
+      flex: 1 1 210px;
       background: var(--terracotta);
       color: #ffffff;
       border: none;
@@ -150,11 +152,16 @@
       font-size: 1rem;
       font-weight: 800;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, opacity 0.2s;
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       background: var(--terracotta-dark);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: wait;
     }
 
     .btn-secondary {
@@ -209,6 +216,16 @@
       min-height: 20px;
     }
 
+    .web-ref-box {
+      margin-top: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
     /* Seções Coloridas em Coluna Única */
     .hidden {
       display: none !important;
@@ -250,6 +267,21 @@
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
+    }
+
+    .btn-clear-hist {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-clear-hist:hover {
+      background: rgba(255, 255, 255, 0.28);
     }
 
     .section-body {
@@ -492,7 +524,7 @@
       color: var(--slate);
     }
 
-    /* Histórico */
+    /* Histórico com botão de excluir */
     .head-gray { background: #334155; }
     .body-gray { background: var(--gray-soft); }
 
@@ -502,11 +534,19 @@
       gap: 8px;
     }
 
-    .history-btn {
+    .history-pill {
+      display: inline-flex;
+      align-items: center;
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 10px;
-      padding: 7px 12px;
+      overflow: hidden;
+    }
+
+    .history-btn {
+      background: transparent;
+      border: none;
+      padding: 7px 10px;
       font-size: 0.82rem;
       font-weight: 700;
       color: var(--slate);
@@ -514,8 +554,24 @@
     }
 
     .history-btn:hover {
-      border-color: var(--terracotta);
       color: var(--terracotta);
+      background: #fff7ed;
+    }
+
+    .history-del {
+      background: transparent;
+      border: none;
+      border-left: 1px solid #e2e8f0;
+      padding: 7px 9px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .history-del:hover {
+      background: var(--danger-soft);
+      color: var(--danger);
     }
 
     @media print {
@@ -588,6 +644,7 @@
       </div>
 
       <div class="status-msg" id="statusMsg"></div>
+      <div class="web-ref-box hidden" id="webRefBox"></div>
     </section>
 
     <!-- Área de Resultados (oculta até pesquisar) -->
@@ -687,21 +744,21 @@
       </article>
     </section>
 
-    <!-- Histórico Recente -->
+    <!-- Histórico Recente com botão de excluir -->
     <section class="section-card section-gray">
       <div class="section-head head-gray">
         <h2>Histórico Recente</h2>
-        <span class="section-pill">Acesso rápido</span>
+        <button type="button" class="btn-clear-hist" id="limparHistBtn">Limpar tudo</button>
       </div>
       <div class="section-body body-gray">
-        <div class="history-list" id="historyList">
-          <span style="font-size:0.85rem;color:#64748b;">Nenhuma ficha gerada ainda nesta sessão.</span>
-        </div>
+        <div class="history-list" id="historyList"></div>
       </div>
     </section>
   </main>
 
   <script>
+    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v1";
+
     const BASE_PRATOS = {
       "strogonoff de frango": {
         nome: "Strogonoff de Frango",
@@ -882,12 +939,14 @@
     };
 
     let fichaAtual = null;
-    const historico = [];
+    let historico = carregarHistorico();
 
     const form = document.getElementById("fichaForm");
+    const gerarBtn = document.getElementById("gerarBtn");
     const pratoInput = document.getElementById("pratoInput");
     const pessoasInput = document.getElementById("pessoasInput");
     const statusMsg = document.getElementById("statusMsg");
+    const webRefBox = document.getElementById("webRefBox");
     const resultadoArea = document.getElementById("resultadoArea");
 
     function normalizar(texto) {
@@ -898,160 +957,49 @@
         .trim();
     }
 
-    function gerarFichaGenerica(nomeDigitado) {
-      const limpo = nomeDigitado.trim() || "Prato Personalizado";
-      return {
-        nome: limpo,
-        categoria: "Prato Principal",
-        tempo: "30 min",
-        fatorCoccao: 1.1,
-        pesoPorcaoBase: 300,
-        perfil: ["Ficha Estimada", "Ajustável por Porção"],
-        alergenos: ["Verificar rótulos e ingredientes específicos"],
-        nutriPorPorcao: {
-          calorias: 340,
-          carboidratos: 28,
-          proteinas: 24,
-          gorduras: 14,
-          fibras: 3.5,
-          sodio: 550
-        },
-        ingredientesBase: [
-          { nome: `Ingrediente principal (${limpo})`, qtd: 150, un: "g", obs: "Selecionar e higienizar" },
-          { nome: "Temperos naturais (alho, cebola, ervas)", qtd: 25, un: "g", obs: "Picados a gosto" },
-          { nome: "Azeite ou óleo vegetal", qtd: 8, un: "ml", obs: "Para cocção" },
-          { nome: "Sal e pimenta", qtd: 3, un: "g", obs: "Ajustar com moderação" }
-        ],
-        acompanhamentosBase: [
-          { nome: "Arroz ou cereal cozido", qtd: 100, un: "g", motivo: "Base energética prática para acompanhar o prato." },
-          { nome: "Salada fresca da estação", qtd: 75, un: "g", motivo: "Aporta fibras, vitaminas e equilíbrio ao prato." }
-        ],
-        passos: [
-          `Separe, higienize e pré-prepare todos os ingredientes necessários para ${limpo}.`,
-          "Realize a cocção respeitando a ordem dos ingredientes e o ponto ideal de cada item.",
-          "Ajuste o tempero ao final, divida em porções uniformes e sirva em seguida."
-        ],
-        dica: "Padronize o porcionamento com balança ou concha medida para manter rendimento e valor nutricional constantes."
-      };
-    }
-
-    async function buscarNaWeb(nomePrato) {
-      // Tenta consulta leve na Wikipedia PT como apoio de pesquisa web pública, sem travar caso offline
-      const query = encodeURIComponent(nomePrato.trim());
-      const url = `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${query}&format=json&origin=*`;
+    function carregarHistorico() {
       try {
-        const resp = await fetch(url, { signal: AbortSignal.timeout(2500) });
-        if (!resp.ok) return null;
-        const data = await resp.json();
-        const primeiro = data?.query?.search?.[0];
-        if (!primeiro) return null;
-        return {
-          titulo: primeiro.title,
-          resumo: primeiro.snippet.replace(/<[^>]+>/g, "")
-        };
+        const salvo = localStorage.getItem(STORAGE_KEY);
+        const parsed = JSON.parse(salvo || "[]");
+        return Array.isArray(parsed) ? parsed : [];
       } catch {
-        return null;
+        return [];
       }
     }
 
-    function formatarQuantidade(qtdBase, unidade, pessoas) {
-      const total = qtdBase * pessoas;
-      if (unidade === "g" && total >= 1000) {
-        return `${(total / 1000).toFixed(2).replace(".", ",")} kg`;
+    function salvarHistorico() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(historico));
+      } catch {
+        // Ignora erro de armazenamento se indisponível
       }
-      if (unidade === "ml" && total >= 1000) {
-        return `${(total / 1000).toFixed(2).replace(".", ",")} L`;
-      }
-      const valorFormatado = Number.isInteger(total) ? total : total.toFixed(1).replace(".", ",");
-      return `${valorFormatado} ${unidade}`;
     }
 
-    function renderizarFicha() {
-      if (!fichaAtual) return;
+    function renderizarHistorico() {
+      const histEl = document.getElementById("historyList");
+      if (!historico.length) {
+        histEl.innerHTML = `<span style="font-size:0.85rem;color:#64748b;">Nenhuma ficha salva no histórico.</span>`;
+        return;
+      }
 
-      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
-      pessoasInput.value = pessoas;
-
-      const pesoTotalGramas = Math.round(fichaAtual.pesoPorcaoBase * pessoas);
-      const rendimentoTexto = pesoTotalGramas >= 1000
-        ? `${(pesoTotalGramas / 1000).toFixed(2).replace(".", ",")} kg`
-        : `${pesoTotalGramas} g`;
-
-      document.getElementById("tituloPrato").textContent = fichaAtual.nome;
-      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`;
-      document.getElementById("rendimentoTotal").textContent = rendimentoTexto;
-      document.getElementById("fatorCoccao").textContent = `Fator cocção: ${fichaAtual.fatorCoccao.toFixed(2)}`;
-      document.getElementById("qtdPorcoes").textContent = pessoas;
-      document.getElementById("pesoPorcao").textContent = `${fichaAtual.pesoPorcaoBase} g`;
-      document.getElementById("tempoPreparo").textContent = fichaAtual.tempo;
-      document.getElementById("categoriaPrato").textContent = fichaAtual.categoria;
-
-      // Nutrição
-      const tagsEl = document.getElementById("nutriTags");
-      tagsEl.innerHTML = [
-        ...fichaAtual.perfil.map((p) => `<span class="tag-purple">${p}</span>`),
-        ...fichaAtual.alergenos.map((a) => `<span class="tag-purple">Atenção: ${a}</span>`)
-      ].join("");
-
-      const n = fichaAtual.nutriPorPorcao;
-      const itensNutri = [
-        { label: "Calorias", val: `${n.calorias} kcal`, tot: `Total: ${n.calorias * pessoas} kcal` },
-        { label: "Carboidratos", val: `${n.carboidratos} g`, tot: `Total: ${(n.carboidratos * pessoas).toFixed(1)} g` },
-        { label: "Proteínas", val: `${n.proteinas} g`, tot: `Total: ${(n.proteinas * pessoas).toFixed(1)} g` },
-        { label: "Gorduras Totais", val: `${n.gorduras} g`, tot: `Total: ${(n.gorduras * pessoas).toFixed(1)} g` },
-        { label: "Fibras", val: `${n.fibras} g`, tot: `Total: ${(n.fibras * pessoas).toFixed(1)} g` },
-        { label: "Sódio", val: `${n.sodio} mg`, tot: `Total: ${n.sodio * pessoas} mg` }
-      ];
-
-      document.getElementById("nutriGrid").innerHTML = itensNutri
+      histEl.innerHTML = historico
         .map(
-          (item) => `
-          <div class="nutri-item">
-            <div class="nutri-name">${item.label}</div>
-            <div class="nutri-num">${item.val}</div>
-            <div class="nutri-total">${item.tot}</div>
+          (item, i) => `
+          <div class="history-pill">
+            <button type="button" class="history-btn" data-hist="${i}">
+              ${item.nome} (${item.pessoas}p)
+            </button>
+            <button
+              type="button"
+              class="history-del"
+              data-del="${i}"
+              title="Excluir ${item.nome} do histórico"
+              aria-label="Excluir ${item.nome} do histórico"
+            >×</button>
           </div>
         `
         )
         .join("");
-
-      // Ingredientes
-      document.getElementById("badgeIngredientes").textContent = `${fichaAtual.ingredientesBase.length} itens`;
-      document.getElementById("ingredientesBody").innerHTML = fichaAtual.ingredientesBase
-        .map(
-          (ing) => `
-          <tr>
-            <td><strong>${ing.nome}</strong></td>
-            <td>${formatarQuantidade(ing.qtd, ing.un, pessoas)}</td>
-            <td>${ing.obs}</td>
-          </tr>
-        `
-        )
-        .join("");
-
-      // Acompanhamentos
-      document.getElementById("acompanhamentosList").innerHTML = fichaAtual.acompanhamentosBase
-        .map(
-          (acomp) => `
-          <div class="acomp-card">
-            <div class="acomp-top">
-              <span class="acomp-title">${acomp.nome}</span>
-              <span class="acomp-qty">${formatarQuantidade(acomp.qtd, acomp.un, pessoas)}</span>
-            </div>
-            <p class="acomp-desc">${acomp.motivo}</p>
-          </div>
-        `
-        )
-        .join("");
-
-      // Modo de preparo e dica
-      document.getElementById("passosList").innerHTML = fichaAtual.passos
-        .map((passo) => `<li>${passo}</li>`)
-        .join("");
-
-      document.getElementById("dicaBox").innerHTML = `<strong>Dica Silene Rodrigues Nutre:</strong> ${fichaAtual.dica}`;
-
-      resultadoArea.classList.remove("hidden");
     }
 
     function adicionarHistorico(ficha, pessoas) {
@@ -1059,138 +1007,59 @@
       const idx = historico.findIndex((h) => normalizar(h.nome) === normalizar(entrada.nome));
       if (idx > -1) historico.splice(idx, 1);
       historico.unshift(entrada);
-      if (historico.length > 8) historico.pop();
-
-      const histEl = document.getElementById("historyList");
-      histEl.innerHTML = historico
-        .map(
-          (item, i) => `
-          <button type="button" class="history-btn" data-hist="${i}">
-            ${item.nome} (${item.pessoas}p)
-          </button>
-        `
-        )
-        .join("");
+      if (historico.length > 10) historico.pop();
+      salvarHistorico();
+      renderizarHistorico();
     }
 
-    async function montarFicha(nomePrato, pessoas) {
-      const chave = normalizar(nomePrato);
-      statusMsg.textContent = `Pesquisando "${nomePrato}" para ${pessoas} pessoa(s)...`;
+    function excluirHistorico(index) {
+      if (index < 0 || index >= historico.length) return;
+      const removido = historico[index];
+      historico.splice(index, 1);
+      salvarHistorico();
+      renderizarHistorico();
+      statusMsg.textContent = `"${removido.nome}" removido do histórico.`;
+    }
 
-      let baseEncontrada = BASE_PRATOS[chave];
-      if (!baseEncontrada) {
-        const chaveParcial = Object.keys(BASE_PRATOS).find(
-          (k) => chave.includes(k) || k.includes(chave)
+    function inferirPerfilPorTexto(texto, nomePrato) {
+      const t = normalizar(`${nomePrato} ${texto}`);
+      const ingredientesBase = [];
+      const perfil = ["Pesquisa Web + Estimativa"];
+      let calorias = 330;
+      let carboidratos = 26;
+      let proteinas = 23;
+      let gorduras = 14;
+      let fibras = 3.5;
+      let sodio = 540;
+      let pesoPorcaoBase = 300;
+      let categoria = "Prato Principal";
+
+      if (t.includes("salada") || t.includes("folha") || t.includes("legume") || t.includes("vegetal")) {
+        categoria = "Salada / Guarnição";
+        perfil.push("Rico em Fibras", "Baixa Densidade Calórica");
+        calorias = 180;
+        carboidratos = 14;
+        proteinas = 7;
+        gorduras = 9;
+        fibras = 5.2;
+        sodio = 290;
+        pesoPorcaoBase = 200;
+        ingredientesBase.push(
+          { nome: "Hortaliças e folhas frescas higienizadas", qtd: 110, un: "g", obs: "Cortar no momento do preparo" },
+          { nome: "Legumes complementares (tomate, cenoura, pepino)", qtd: 75, un: "g", obs: "Em cortes uniformes" },
+          { nome: "Azeite extravirgem e limão/vinagre", qtd: 12, un: "ml", obs: "Temperar na hora de servir" }
         );
-        if (chaveParcial) {
-          baseEncontrada = BASE_PRATOS[chaveParcial];
-        }
-      }
-
-      const infoWeb = await buscarNaWeb(nomePrato);
-
-      if (baseEncontrada) {
-        fichaAtual = {
-          ...baseEncontrada,
-          nome: nomePrato.trim()
-        };
-        statusMsg.textContent = infoWeb
-          ? `Ficha montada com pesquisa web (${infoWeb.titulo}) e base técnica.`
-          : `Ficha montada com cálculo proporcional para ${pessoas} pessoa(s).`;
-      } else {
-        fichaAtual = gerarFichaGenerica(nomePrato);
-        if (infoWeb) {
-          fichaAtual.dica = `${fichaAtual.dica} Referência encontrada: ${infoWeb.resumo}.`;
-          statusMsg.textContent = `Ficha montada após consulta na web para "${infoWeb.titulo}".`;
-        } else {
-          statusMsg.textContent = `Ficha estimada gerada para "${fichaAtual.nome}" (${pessoas} pessoa(s)).`;
-        }
-      }
-
-      renderizarFicha();
-      adicionarHistorico(fichaAtual, pessoas);
-    }
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const nome = pratoInput.value.trim();
-      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
-      if (!nome) return;
-      montarFicha(nome, pessoas);
-    });
-
-    pessoasInput.addEventListener("input", () => {
-      if (fichaAtual) renderizarFicha();
-    });
-
-    document.getElementById("menosBtn").addEventListener("click", () => {
-      const atual = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
-      pessoasInput.value = Math.max(1, atual - 1);
-      if (fichaAtual) renderizarFicha();
-    });
-
-    document.getElementById("maisBtn").addEventListener("click", () => {
-      const atual = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
-      pessoasInput.value = atual + 1;
-      if (fichaAtual) renderizarFicha();
-    });
-
-    document.querySelectorAll(".chip").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const prato = btn.dataset.prato;
-        const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 4);
-        pratoInput.value = prato;
-        montarFicha(prato, pessoas);
-      });
-    });
-
-    document.getElementById("historyList").addEventListener("click", (e) => {
-      const btn = e.target.closest(".history-btn");
-      if (!btn) return;
-      const item = historico[Number(btn.dataset.hist)];
-      if (!item) return;
-      pratoInput.value = item.nome;
-      pessoasInput.value = item.pessoas;
-      montarFicha(item.nome, item.pessoas);
-    });
-
-    document.getElementById("copiarBtn").addEventListener("click", async () => {
-      if (!fichaAtual) {
-        statusMsg.textContent = "Pesquise um prato primeiro para copiar a ficha.";
-        return;
-      }
-      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
-      const linhas = [
-        `*SILENE RODRIGUES NUTRE*`,
-        `*Prato:* ${fichaAtual.nome}`,
-        `*Porções / Pessoas:* ${pessoas}`,
-        `*Calorias por porção:* ${fichaAtual.nutriPorPorcao.calorias} kcal`,
-        "",
-        "*Ingredientes:*"
-      ];
-      fichaAtual.ingredientesBase.forEach((ing) => {
-        linhas.push(`• ${ing.nome}: ${formatarQuantidade(ing.qtd, ing.un, pessoas)}`);
-      });
-      linhas.push("", "*Acompanhamentos:*");
-      fichaAtual.acompanhamentosBase.forEach((ac) => {
-        linhas.push(`• ${ac.nome}: ${formatarQuantidade(ac.qtd, ac.un, pessoas)}`);
-      });
-
-      try {
-        await navigator.clipboard.writeText(linhas.join("\n"));
-        statusMsg.textContent = "Ficha copiada para a área de transferência (pronta para WhatsApp).";
-      } catch {
-        statusMsg.textContent = "Não foi possível copiar automaticamente neste navegador.";
-      }
-    });
-
-    document.getElementById("imprimirBtn").addEventListener("click", () => {
-      if (!fichaAtual) {
-        statusMsg.textContent = "Pesquise um prato primeiro para imprimir.";
-        return;
-      }
-      window.print();
-    });
-  </script>
-</body>
-</html>
+      } else if (t.includes("peixe") || t.includes("camarao") || t.includes("salmao") || t.includes("bacalhau") || t.includes("tilapia")) {
+        categoria = "Prato Principal — Pescados";
+        perfil.push("Fonte Proteica", "Leve");
+        calorias = 310;
+        carboidratos = 12;
+        proteinas = 29;
+        gorduras = 15;
+        fibras = 2.5;
+        sodio = 520;
+        pesoPorcaoBase = 290;
+        ingredientesBase.push(
+          { nome: "Filé ou posta de pescado", qtd: 160, un: "g", obs: "Limpo e temperado com limão e ervas" },
+          { nome: "Cebola, alho e tomate", qtd: 45, un: "g", obs: "Base aromática do cozimento" },
+          { nome: "Azeite ou óleo vegetal", qtd: 10, un: "ml", obs: "Para sel
