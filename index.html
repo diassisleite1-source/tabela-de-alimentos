@@ -89,7 +89,7 @@
       font-size: 0.96rem;
     }
 
-    /* Painel de Entrada (Apenas 2 caixas principais) */
+    /* Painel de Entrada */
     .input-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -661,7 +661,7 @@
       <p class="brand-subtitle">Ficha técnica de alimentos, rendimento, porções por ambiente, informações nutricionais e acompanhamentos.</p>
     </header>
 
-    <!-- Apenas 2 Caixas Principais -->
+    <!-- Painel de Entrada -->
     <section class="input-card">
       <div class="form-grid">
         <div class="field">
@@ -669,7 +669,7 @@
           <input
             id="pratoInput"
             type="text"
-            placeholder="Ex.: Frango grelhado, Feijoada, Strogonoff..."
+            placeholder="Ex.: Feijoada completa, Frango grelhado, Strogonoff..."
             autocomplete="off"
           />
         </div>
@@ -691,13 +691,14 @@
         <button type="button" class="env-btn" data-env="delivery" data-pct="115">Delivery / Marmita (+15%)</button>
         <button type="button" class="env-btn" data-env="buffet" data-pct="85">Buffet / Evento (-15%)</button>
         <button type="button" class="env-btn" data-env="dieta" data-pct="75">Nutrição / Dieta (-25%)</button>
+        <button type="button" class="env-btn" data-env="local3kg" data-pct="30">Padrão do Local (30% · 3kg/90p)</button>
         <button type="button" class="env-btn" data-env="personalizado">Personalizado</button>
         <span class="pct-box">
           <label for="porcentagemInput" style="margin:0;font-size:0.78rem;">Porcentagem:</label>
           <input
             id="porcentagemInput"
             type="number"
-            min="10"
+            min="1"
             max="500"
             step="1"
             value="100"
@@ -726,7 +727,7 @@
       <div class="web-ref-box hidden" id="webRefBox"></div>
     </section>
 
-    <!-- Área de Resultados (oculta até pesquisar) -->
+    <!-- Área de Resultados -->
     <section id="resultadoArea" class="hidden">
       <!-- Rendimento e Porções -->
       <article class="section-card">
@@ -825,7 +826,7 @@
       </article>
     </section>
 
-    <!-- Histórico Recente com botão de excluir -->
+    <!-- Histórico Recente -->
     <section class="section-card section-gray">
       <div class="section-head head-gray">
         <h2>Histórico Recente</h2>
@@ -838,14 +839,15 @@
   </main>
 
   <script>
-    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v4";
-    const PCT_STORAGE_KEY = "silene_rodrigues_nutre_pct_custom_v1";
+    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v5";
+    const PCT_STORAGE_KEY = "silene_rodrigues_nutre_pct_custom_v2";
 
     const AMBIENTES_FIXOS = {
       salao: { chave: "salao", nome: "Salão", pct: 100 },
       delivery: { chave: "delivery", nome: "Delivery / Marmita", pct: 115 },
       buffet: { chave: "buffet", nome: "Buffet / Evento", pct: 85 },
-      dieta: { chave: "dieta", nome: "Nutrição / Dieta", pct: 75 }
+      dieta: { chave: "dieta", nome: "Nutrição / Dieta", pct: 75 },
+      local3kg: { chave: "local3kg", nome: "Padrão do Local (3kg/90p)", pct: 30 }
     };
 
     const BASE_PRATOS = {
@@ -902,7 +904,7 @@
           sodio: 980
         },
         ingredientesBase: [
-          { nome: "Feijão preto cru", qtd: 110, un: "g", obs: "Deixar de molho previamente" },
+          { nome: "Feijão preto cru", qtd: 110, un: "g", obs: "Padrão 100%: 110g/p (em 30% fica ~33g/p, equivalente a 3kg/90p)" },
           { nome: "Carne seca / charque dessalgada", qtd: 55, un: "g", obs: "Cortada em cubos" },
           { nome: "Linguiça calabresa defumada", qtd: 45, un: "g", obs: "Em rodelas" },
           { nome: "Costelinha ou lombo suíno", qtd: 60, un: "g", obs: "Escaldado se necessário" },
@@ -919,7 +921,7 @@
           "Cozinhe o feijão preto com louro até amaciar e junte as carnes para apurar o sabor.",
           "Finalize com refogado de alho e cebola e ajuste o caldo até atingir consistência encorpada."
         ],
-        dica: "Desengordure a superfície após o cozimento se desejar reduzir gorduras saturadas e sirva sempre com couve e laranja."
+        dica: "No padrão do local (3 kg para 90 pessoas, cerca de 33 g de feijão cru por pessoa), a porcentagem de 30% escala toda a ficha automaticamente."
       },
       "frango grelhado com legumes": {
         nome: "Frango Grelhado com Legumes",
@@ -1050,7 +1052,7 @@
     function obterPorcentagemAtual() {
       const val = parseFloat(porcentagemInput.value);
       if (Number.isNaN(val) || val <= 0) return 100;
-      return Math.min(500, Math.max(10, val));
+      return Math.min(500, Math.max(1, val));
     }
 
     function obterMultiplicador() {
@@ -1077,7 +1079,7 @@
         const salvo = localStorage.getItem(PCT_STORAGE_KEY);
         if (salvo) {
           const num = parseFloat(salvo);
-          if (!Number.isNaN(num) && num >= 10 && num <= 500) {
+          if (!Number.isNaN(num) && num >= 1 && num <= 500) {
             porcentagemInput.value = num;
           }
         }
