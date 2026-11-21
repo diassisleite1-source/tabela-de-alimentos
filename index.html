@@ -208,6 +208,31 @@
       background: #ffedd5;
     }
 
+    .env-bar {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .env-btn {
+      background: #f8fafc;
+      color: var(--slate);
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .env-btn.active {
+      background: var(--teal);
+      color: #ffffff;
+      border-color: var(--teal);
+    }
+
     .status-msg {
       margin-top: 10px;
       font-size: 0.86rem;
@@ -583,7 +608,7 @@
       body {
         background: #ffffff;
       }
-      .input-card, .actions-row, .quick-picks, .stepper button, .section-gray, .btn-secondary {
+      .input-card, .actions-row, .quick-picks, .env-bar, .stepper button, .section-gray, .btn-secondary {
         display: none !important;
       }
       .container {
@@ -603,7 +628,7 @@
     <header class="brand-header">
       <span class="brand-badge">Nutrição &amp; Gastronomia</span>
       <h1 class="brand-title">Silene Rodrigues Nutre</h1>
-      <p class="brand-subtitle">Ficha técnica de alimentos, rendimento, porções, informações nutricionais e acompanhamentos.</p>
+      <p class="brand-subtitle">Ficha técnica de alimentos, rendimento, porções por ambiente, informações nutricionais e acompanhamentos.</p>
     </header>
 
     <!-- Apenas 2 Caixas Principais -->
@@ -628,6 +653,14 @@
             value="4"
           />
         </div>
+      </div>
+
+      <div class="env-bar" id="envBar">
+        <span class="quick-label">Ambiente / Porção:</span>
+        <button type="button" class="env-btn active" data-env="salao" data-mult="1">Salão (100%)</button>
+        <button type="button" class="env-btn" data-env="delivery" data-mult="1.15">Delivery / Marmita (+15%)</button>
+        <button type="button" class="env-btn" data-env="buffet" data-mult="0.85">Buffet / Evento (-15%)</button>
+        <button type="button" class="env-btn" data-env="dieta" data-mult="0.75">Nutrição / Dieta (-25%)</button>
       </div>
 
       <div class="actions-row">
@@ -655,7 +688,7 @@
       <article class="section-card">
         <div class="section-head head-teal">
           <h2 id="tituloPrato">Ficha Técnica</h2>
-          <span class="section-pill" id="badgePessoas">4 pessoas</span>
+          <span class="section-pill" id="badgePessoas">4 pessoas · Salão</span>
         </div>
         <div class="section-body body-teal">
           <div class="metrics-grid">
@@ -672,7 +705,7 @@
                 <span id="qtdPorcoes">4</span>
                 <button type="button" id="maisBtn" aria-label="Aumentar porções">+</button>
               </div>
-              <div class="metric-sub">Ajuste em tempo real</div>
+              <div class="metric-sub" id="ambienteLabel">Ambiente: Salão</div>
             </div>
 
             <div class="metric-box">
@@ -761,7 +794,14 @@
   </main>
 
   <script>
-    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v2";
+    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v3";
+
+    const AMBIENTES = {
+      salao: { nome: "Salão", mult: 1.0 },
+      delivery: { nome: "Delivery / Marmita", mult: 1.15 },
+      buffet: { nome: "Buffet / Evento", mult: 0.85 },
+      dieta: { nome: "Nutrição / Dieta", mult: 0.75 }
+    };
 
     const BASE_PRATOS = {
       "strogonoff de frango": {
@@ -943,6 +983,7 @@
     };
 
     let fichaAtual = null;
+    let ambienteAtual = AMBIENTES.salao;
     let historico = carregarHistorico();
 
     const gerarBtn = document.getElementById("gerarBtn");
@@ -1220,8 +1261,8 @@
       return resultados;
     }
 
-    function formatarQuantidade(qtdBase, unidade, pessoas) {
-      const total = qtdBase * pessoas;
+    function formatarQuantidade(qtdBase, unidade, pessoas, multAmbiente = 1) {
+      const total = qtdBase * pessoas * multAmbiente;
       if (unidade === "g" && total >= 1000) {
         return `${(total / 1000).toFixed(2).replace(".", ",")} kg`;
       }
@@ -1238,17 +1279,20 @@
       const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
       pessoasInput.value = pessoas;
 
-      const pesoTotalGramas = Math.round(fichaAtual.pesoPorcaoBase * pessoas);
+      const mult = ambienteAtual.mult;
+      const pesoPorcaoAjustada = Math.round(fichaAtual.pesoPorcaoBase * mult);
+      const pesoTotalGramas = Math.round(pesoPorcaoAjustada * pessoas);
       const rendimentoTexto = pesoTotalGramas >= 1000
         ? `${(pesoTotalGramas / 1000).toFixed(2).replace(".", ",")} kg`
         : `${pesoTotalGramas} g`;
 
       document.getElementById("tituloPrato").textContent = fichaAtual.nome;
-      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`;
+      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${ambienteAtual.nome}`;
       document.getElementById("rendimentoTotal").textContent = rendimentoTexto;
       document.getElementById("fatorCoccao").textContent = `Fator cocção: ${fichaAtual.fatorCoccao.toFixed(2)}`;
       document.getElementById("qtdPorcoes").textContent = pessoas;
-      document.getElementById("pesoPorcao").textContent = `${fichaAtual.pesoPorcaoBase} g`;
+      document.getElementById("ambienteLabel").textContent = `Ambiente: ${ambienteAtual.nome}`;
+      document.getElementById("pesoPorcao").textContent = `${pesoPorcaoAjustada} g`;
       document.getElementById("tempoPreparo").textContent = fichaAtual.tempo;
       document.getElementById("categoriaPrato").textContent = fichaAtual.categoria;
 
@@ -1259,13 +1303,20 @@
       ].join("");
 
       const n = fichaAtual.nutriPorPorcao;
+      const kcalPorcao = Math.round(n.calorias * mult);
+      const carbPorcao = Number((n.carboidratos * mult).toFixed(1));
+      const protPorcao = Number((n.proteinas * mult).toFixed(1));
+      const gordPorcao = Number((n.gorduras * mult).toFixed(1));
+      const fibPorcao = Number((n.fibras * mult).toFixed(1));
+      const sodPorcao = Math.round(n.sodio * mult);
+
       const itensNutri = [
-        { label: "Calorias", val: `${n.calorias} kcal`, tot: `Total: ${Math.round(n.calorias * pessoas)} kcal` },
-        { label: "Carboidratos", val: `${n.carboidratos} g`, tot: `Total: ${(n.carboidratos * pessoas).toFixed(1)} g` },
-        { label: "Proteínas", val: `${n.proteinas} g`, tot: `Total: ${(n.proteinas * pessoas).toFixed(1)} g` },
-        { label: "Gorduras Totais", val: `${n.gorduras} g`, tot: `Total: ${(n.gorduras * pessoas).toFixed(1)} g` },
-        { label: "Fibras", val: `${n.fibras} g`, tot: `Total: ${(n.fibras * pessoas).toFixed(1)} g` },
-        { label: "Sódio", val: `${n.sodio} mg`, tot: `Total: ${Math.round(n.sodio * pessoas)} mg` }
+        { label: "Calorias", val: `${kcalPorcao} kcal`, tot: `Total: ${Math.round(kcalPorcao * pessoas)} kcal` },
+        { label: "Carboidratos", val: `${carbPorcao} g`, tot: `Total: ${(carbPorcao * pessoas).toFixed(1)} g` },
+        { label: "Proteínas", val: `${protPorcao} g`, tot: `Total: ${(protPorcao * pessoas).toFixed(1)} g` },
+        { label: "Gorduras Totais", val: `${gordPorcao} g`, tot: `Total: ${(gordPorcao * pessoas).toFixed(1)} g` },
+        { label: "Fibras", val: `${fibPorcao} g`, tot: `Total: ${(fibPorcao * pessoas).toFixed(1)} g` },
+        { label: "Sódio", val: `${sodPorcao} mg`, tot: `Total: ${Math.round(sodPorcao * pessoas)} mg` }
       ];
 
       document.getElementById("nutriGrid").innerHTML = itensNutri
@@ -1286,7 +1337,7 @@
           (ing) => `
           <tr>
             <td><strong>${ing.nome}</strong></td>
-            <td>${formatarQuantidade(ing.qtd, ing.un, pessoas)}</td>
+            <td>${formatarQuantidade(ing.qtd, ing.un, pessoas, mult)}</td>
             <td>${ing.obs}</td>
           </tr>
         `
@@ -1299,7 +1350,7 @@
           <div class="acomp-card">
             <div class="acomp-top">
               <span class="acomp-title">${acomp.nome}</span>
-              <span class="acomp-qty">${formatarQuantidade(acomp.qtd, acomp.un, pessoas)}</span>
+              <span class="acomp-qty">${formatarQuantidade(acomp.qtd, acomp.un, pessoas, mult)}</span>
             </div>
             <p class="acomp-desc">${acomp.motivo}</p>
           </div>
@@ -1331,7 +1382,7 @@
       const chave = normalizar(textoLimpo);
       gerarBtn.disabled = true;
       gerarBtn.textContent = "Pesquisando na web...";
-      statusMsg.textContent = `Pesquisando "${textoLimpo}" para ${qtdPessoas} pessoa(s)...`;
+      statusMsg.textContent = `Pesquisando "${textoLimpo}" para ${qtdPessoas} pessoa(s) (${ambienteAtual.nome})...`;
       webRefBox.classList.add("hidden");
 
       try {
@@ -1378,9 +1429,9 @@
               .map((r) => `[${r.fonte}] <strong>${r.titulo}</strong> — ${r.trecho}`)
               .join(" | ");
           webRefBox.classList.remove("hidden");
-          statusMsg.textContent = `Ficha montada após pesquisa na web para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s)).`;
+          statusMsg.textContent = `Ficha montada após pesquisa na web para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${ambienteAtual.nome}).`;
         } else {
-          statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s)).`;
+          statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${ambienteAtual.nome}).`;
         }
 
         renderizarFicha();
@@ -1389,12 +1440,25 @@
         fichaAtual = inferirPerfilPorTexto("", textoLimpo);
         renderizarFicha();
         adicionarHistorico(fichaAtual, qtdPessoas);
-        statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s)).`;
+        statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s) · ${ambienteAtual.nome}).`;
       } finally {
         gerarBtn.disabled = false;
         gerarBtn.textContent = "Pesquisar e Montar Ficha";
       }
     }
+
+    document.querySelectorAll(".env-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".env-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const chaveEnv = btn.dataset.env;
+        ambienteAtual = AMBIENTES[chaveEnv] || AMBIENTES.salao;
+        if (fichaAtual) {
+          renderizarFicha();
+          statusMsg.textContent = `Porções recalculadas para o ambiente: ${ambienteAtual.nome}.`;
+        }
+      });
+    });
 
     gerarBtn.addEventListener("click", () => {
       montarFicha(pratoInput.value, pessoasInput.value);
@@ -1462,20 +1526,24 @@
         return;
       }
       const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      const mult = ambienteAtual.mult;
+      const kcalPorcao = Math.round(fichaAtual.nutriPorPorcao.calorias * mult);
+
       const linhas = [
         `*SILENE RODRIGUES NUTRE*`,
         `*Prato:* ${fichaAtual.nome}`,
+        `*Ambiente:* ${ambienteAtual.nome}`,
         `*Porções / Pessoas:* ${pessoas}`,
-        `*Calorias por porção:* ${fichaAtual.nutriPorPorcao.calorias} kcal`,
+        `*Calorias por porção:* ${kcalPorcao} kcal`,
         "",
         "*Ingredientes:*"
       ];
       fichaAtual.ingredientesBase.forEach((ing) => {
-        linhas.push(`• ${ing.nome}: ${formatarQuantidade(ing.qtd, ing.un, pessoas)}`);
+        linhas.push(`• ${ing.nome}: ${formatarQuantidade(ing.qtd, ing.un, pessoas, mult)}`);
       });
       linhas.push("", "*Acompanhamentos:*");
       fichaAtual.acompanhamentosBase.forEach((ac) => {
-        linhas.push(`• ${ac.nome}: ${formatarQuantidade(ac.qtd, ac.un, pessoas)}`);
+        linhas.push(`• ${ac.nome}: ${formatarQuantidade(ac.qtd, ac.un, pessoas, mult)}`);
       });
 
       try {
