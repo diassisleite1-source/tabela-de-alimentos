@@ -420,12 +420,17 @@
     .head-emerald { background: var(--emerald); }
     .body-emerald { background: var(--emerald-soft); }
 
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: #ffffff;
+      border-radius: 12px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       background: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
     }
 
     th, td {
@@ -603,36 +608,33 @@
 
     <!-- Apenas 2 Caixas Principais -->
     <section class="input-card">
-      <form id="fichaForm">
-        <div class="form-grid">
-          <div class="field">
-            <label for="pratoInput">1. Nome do Prato</label>
-            <input
-              id="pratoInput"
-              type="text"
-              placeholder="Ex.: Frango grelhado, Feijoada, Strogonoff..."
-              required
-            />
-          </div>
-          <div class="field">
-            <label for="pessoasInput">2. Quantidade de Pessoas</label>
-            <input
-              id="pessoasInput"
-              type="number"
-              min="1"
-              max="500"
-              value="4"
-              required
-            />
-          </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="pratoInput">1. Nome do Prato</label>
+          <input
+            id="pratoInput"
+            type="text"
+            placeholder="Ex.: Frango grelhado, Feijoada, Strogonoff..."
+            autocomplete="off"
+          />
         </div>
+        <div class="field">
+          <label for="pessoasInput">2. Quantidade de Pessoas</label>
+          <input
+            id="pessoasInput"
+            type="number"
+            min="1"
+            max="500"
+            value="4"
+          />
+        </div>
+      </div>
 
-        <div class="actions-row">
-          <button type="submit" class="btn-primary" id="gerarBtn">Pesquisar e Montar Ficha</button>
-          <button type="button" class="btn-secondary" id="copiarBtn">Copiar WhatsApp</button>
-          <button type="button" class="btn-secondary" id="imprimirBtn">Imprimir / PDF</button>
-        </div>
-      </form>
+      <div class="actions-row">
+        <button type="button" class="btn-primary" id="gerarBtn">Pesquisar e Montar Ficha</button>
+        <button type="button" class="btn-secondary" id="copiarBtn">Copiar WhatsApp</button>
+        <button type="button" class="btn-secondary" id="imprimirBtn">Imprimir / PDF</button>
+      </div>
 
       <div class="quick-picks">
         <span class="quick-label">Exemplos rápidos:</span>
@@ -643,7 +645,7 @@
         <button type="button" class="chip" data-prato="Baião de Dois">Baião de Dois</button>
       </div>
 
-      <div class="status-msg" id="statusMsg"></div>
+      <div class="status-msg" id="statusMsg">Digite o nome do prato e a quantidade de pessoas e clique em "Pesquisar e Montar Ficha".</div>
       <div class="web-ref-box hidden" id="webRefBox"></div>
     </section>
 
@@ -707,16 +709,18 @@
           <span class="section-pill" id="badgeIngredientes">0 itens</span>
         </div>
         <div class="section-body body-emerald">
-          <table>
-            <thead>
-              <tr>
-                <th>Ingrediente</th>
-                <th>Quantidade</th>
-                <th>Observação</th>
-              </tr>
-            </thead>
-            <tbody id="ingredientesBody"></tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ingrediente</th>
+                  <th>Quantidade</th>
+                  <th>Observação</th>
+                </tr>
+              </thead>
+              <tbody id="ingredientesBody"></tbody>
+            </table>
+          </div>
         </div>
       </article>
 
@@ -757,7 +761,7 @@
   </main>
 
   <script>
-    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v1";
+    const STORAGE_KEY = "silene_rodrigues_nutre_historico_v2";
 
     const BASE_PRATOS = {
       "strogonoff de frango": {
@@ -941,7 +945,6 @@
     let fichaAtual = null;
     let historico = carregarHistorico();
 
-    const form = document.getElementById("fichaForm");
     const gerarBtn = document.getElementById("gerarBtn");
     const pratoInput = document.getElementById("pratoInput");
     const pessoasInput = document.getElementById("pessoasInput");
@@ -950,7 +953,7 @@
     const resultadoArea = document.getElementById("resultadoArea");
 
     function normalizar(texto) {
-      return texto
+      return String(texto || "")
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
@@ -971,7 +974,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(historico));
       } catch {
-        // Ignora erro de armazenamento se indisponível
+        // Ignora caso localStorage esteja bloqueado
       }
     }
 
@@ -1022,7 +1025,8 @@
     }
 
     function inferirPerfilPorTexto(texto, nomePrato) {
-      const t = normalizar(`${nomePrato} ${texto}`);
+      const limpo = String(nomePrato || "").trim();
+      const t = normalizar(`${limpo} ${texto}`);
       const ingredientesBase = [];
       const perfil = ["Pesquisa Web + Estimativa"];
       let calorias = 330;
@@ -1062,4 +1066,435 @@
         ingredientesBase.push(
           { nome: "Filé ou posta de pescado", qtd: 160, un: "g", obs: "Limpo e temperado com limão e ervas" },
           { nome: "Cebola, alho e tomate", qtd: 45, un: "g", obs: "Base aromática do cozimento" },
-          { nome: "Azeite ou óleo vegetal", qtd: 10, un: "ml", obs: "Para sel
+          { nome: "Azeite ou óleo vegetal", qtd: 10, un: "ml", obs: "Para selar ou refogar" },
+          { nome: "Ervas frescas e sal", qtd: 8, un: "g", obs: "Ajustar com moderação" }
+        );
+      } else if (t.includes("frango") || t.includes("galinha")) {
+        categoria = "Prato Principal — Aves";
+        perfil.push("Alto Teor Proteico");
+        calorias = 325;
+        carboidratos = 15;
+        proteinas = 33;
+        gorduras = 13;
+        fibras = 2.8;
+        sodio = 510;
+        pesoPorcaoBase = 290;
+        ingredientesBase.push(
+          { nome: "Corte de frango selecionado", qtd: 160, un: "g", obs: "Limpo e porcionado" },
+          { nome: "Cebola, alho e temperos naturais", qtd: 30, un: "g", obs: "Picados" },
+          { nome: "Azeite ou óleo", qtd: 9, un: "ml", obs: "Para cocção" },
+          { nome: "Sal e pimenta", qtd: 3, un: "g", obs: "Com moderação" }
+        );
+      } else if (t.includes("carne") || t.includes("bife") || t.includes("picanha") || t.includes("costela") || t.includes("almondega")) {
+        categoria = "Prato Principal — Carnes";
+        perfil.push("Rico em Proteínas e Ferro");
+        calorias = 390;
+        carboidratos = 10;
+        proteinas = 31;
+        gorduras = 24;
+        fibras = 1.6;
+        sodio = 580;
+        pesoPorcaoBase = 280;
+        ingredientesBase.push(
+          { nome: "Corte bovino ou suíno escolhido", qtd: 165, un: "g", obs: "Porcionado conforme o preparo" },
+          { nome: "Alho, cebola e ervas", qtd: 30, un: "g", obs: "Refogado base" },
+          { nome: "Azeite ou gordura de preparo", qtd: 9, un: "ml", obs: "Controlar excessos" },
+          { nome: "Sal e temperos secos", qtd: 4, un: "g", obs: "A gosto" }
+        );
+      } else if (t.includes("sopa") || t.includes("caldo") || t.includes("canja")) {
+        categoria = "Sopa / Caldo";
+        perfil.push("Reconfortante", "Hidratante");
+        calorias = 240;
+        carboidratos = 24;
+        proteinas = 14;
+        gorduras = 8;
+        fibras = 4.2;
+        sodio = 610;
+        pesoPorcaoBase = 350;
+        ingredientesBase.push(
+          { nome: "Base proteica ou legumes picados", qtd: 140, un: "g", obs: "Em cubos pequenos" },
+          { nome: "Caldo natural ou água", qtd: 190, un: "ml", obs: "Para cocção e encorpar" },
+          { nome: "Cebola, alho e cheiro-verde", qtd: 25, un: "g", obs: "Refogar antes do caldo" }
+        );
+      } else {
+        ingredientesBase.push(
+          { nome: `Base principal de ${limpo}`, qtd: 150, un: "g", obs: "Higienizar e preparar" },
+          { nome: "Temperos frescos (alho, cebola, ervas)", qtd: 25, un: "g", obs: "Picados" },
+          { nome: "Azeite ou óleo", qtd: 8, un: "ml", obs: "Para cocção" },
+          { nome: "Sal", qtd: 3, un: "g", obs: "Usar com moderação" }
+        );
+      }
+
+      return {
+        nome: limpo,
+        categoria,
+        tempo: "35 min",
+        fatorCoccao: 1.1,
+        pesoPorcaoBase,
+        perfil,
+        alergenos: ["Verificar ingredientes específicos da receita"],
+        nutriPorPorcao: { calorias, carboidratos, proteinas, gorduras, fibras, sodio },
+        ingredientesBase,
+        acompanhamentosBase: [
+          { nome: "Arroz ou cereal cozido", qtd: 100, un: "g", motivo: "Equilibra o aporte energético da refeição." },
+          { nome: "Salada fresca de folhas e legumes", qtd: 75, un: "g", motivo: "Aumenta fibras e frescor ao prato." }
+        ],
+        passos: [
+          `Separe, higienize e pré-prepare os ingredientes para ${limpo}.`,
+          "Realize o preparo respeitando o ponto de cocção e os tempos de cada ingrediente.",
+          "Ajuste o tempero ao final, padronize as porções e sirva em seguida."
+        ],
+        dica: "Padronize o peso das porções na montagem e confira os rótulos dos ingredientes industrializados para maior precisão nutricional."
+      };
+    }
+
+    function fetchComTimeout(url, ms) {
+      if (typeof fetch !== "function") return Promise.resolve(null);
+      return new Promise((resolve) => {
+        let finalizou = false;
+        const timer = setTimeout(() => {
+          if (!finalizou) {
+            finalizou = true;
+            resolve(null);
+          }
+        }, ms);
+
+        fetch(url)
+          .then((resp) => {
+            if (finalizou) return null;
+            if (!resp || !resp.ok) return null;
+            return resp.json();
+          })
+          .then((data) => {
+            if (!finalizou) {
+              finalizou = true;
+              clearTimeout(timer);
+              resolve(data);
+            }
+          })
+          .catch(() => {
+            if (!finalizou) {
+              finalizou = true;
+              clearTimeout(timer);
+              resolve(null);
+            }
+          });
+      });
+    }
+
+    async function consultarWebPrato(nomePrato) {
+      const q = encodeURIComponent(String(nomePrato || "").trim());
+      const resultados = [];
+
+      const wikiUrl = `https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch=${q}&utf8=1&format=json&origin=*`;
+      const wikiData = await fetchComTimeout(wikiUrl, 3000);
+      const hit = wikiData && wikiData.query && wikiData.query.search && wikiData.query.search[0];
+      if (hit) {
+        resultados.push({
+          fonte: "Wikipedia PT",
+          titulo: hit.title,
+          trecho: String(hit.snippet || "").replace(/<[^>]+>/g, "")
+        });
+      }
+
+      const offUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${q}&search_simple=1&action=process&json=1&page_size=1`;
+      const offData = await fetchComTimeout(offUrl, 3000);
+      const prod = offData && offData.products && offData.products[0];
+      if (prod && (prod.product_name || prod.product_name_pt)) {
+        const nut = prod.nutriments || {};
+        resultados.push({
+          fonte: "Open Food Facts",
+          titulo: prod.product_name_pt || prod.product_name,
+          trecho: prod.categories || prod.generic_name || "Registro de alimento encontrado na base aberta.",
+          nutriments: {
+            kcal100g: nut["energy-kcal_100g"],
+            carb100g: nut.carbohydrates_100g,
+            prot100g: nut.proteins_100g,
+            fat100g: nut.fat_100g,
+            fiber100g: nut.fiber_100g,
+            sodium100g: nut.sodium_100g
+          }
+        });
+      }
+
+      return resultados;
+    }
+
+    function formatarQuantidade(qtdBase, unidade, pessoas) {
+      const total = qtdBase * pessoas;
+      if (unidade === "g" && total >= 1000) {
+        return `${(total / 1000).toFixed(2).replace(".", ",")} kg`;
+      }
+      if (unidade === "ml" && total >= 1000) {
+        return `${(total / 1000).toFixed(2).replace(".", ",")} L`;
+      }
+      const valorFormatado = Number.isInteger(total) ? total : total.toFixed(1).replace(".", ",");
+      return `${valorFormatado} ${unidade}`;
+    }
+
+    function renderizarFicha() {
+      if (!fichaAtual) return;
+
+      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      pessoasInput.value = pessoas;
+
+      const pesoTotalGramas = Math.round(fichaAtual.pesoPorcaoBase * pessoas);
+      const rendimentoTexto = pesoTotalGramas >= 1000
+        ? `${(pesoTotalGramas / 1000).toFixed(2).replace(".", ",")} kg`
+        : `${pesoTotalGramas} g`;
+
+      document.getElementById("tituloPrato").textContent = fichaAtual.nome;
+      document.getElementById("badgePessoas").textContent = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`;
+      document.getElementById("rendimentoTotal").textContent = rendimentoTexto;
+      document.getElementById("fatorCoccao").textContent = `Fator cocção: ${fichaAtual.fatorCoccao.toFixed(2)}`;
+      document.getElementById("qtdPorcoes").textContent = pessoas;
+      document.getElementById("pesoPorcao").textContent = `${fichaAtual.pesoPorcaoBase} g`;
+      document.getElementById("tempoPreparo").textContent = fichaAtual.tempo;
+      document.getElementById("categoriaPrato").textContent = fichaAtual.categoria;
+
+      const tagsEl = document.getElementById("nutriTags");
+      tagsEl.innerHTML = [
+        ...fichaAtual.perfil.map((p) => `<span class="tag-purple">${p}</span>`),
+        ...fichaAtual.alergenos.map((a) => `<span class="tag-purple">Atenção: ${a}</span>`)
+      ].join("");
+
+      const n = fichaAtual.nutriPorPorcao;
+      const itensNutri = [
+        { label: "Calorias", val: `${n.calorias} kcal`, tot: `Total: ${Math.round(n.calorias * pessoas)} kcal` },
+        { label: "Carboidratos", val: `${n.carboidratos} g`, tot: `Total: ${(n.carboidratos * pessoas).toFixed(1)} g` },
+        { label: "Proteínas", val: `${n.proteinas} g`, tot: `Total: ${(n.proteinas * pessoas).toFixed(1)} g` },
+        { label: "Gorduras Totais", val: `${n.gorduras} g`, tot: `Total: ${(n.gorduras * pessoas).toFixed(1)} g` },
+        { label: "Fibras", val: `${n.fibras} g`, tot: `Total: ${(n.fibras * pessoas).toFixed(1)} g` },
+        { label: "Sódio", val: `${n.sodio} mg`, tot: `Total: ${Math.round(n.sodio * pessoas)} mg` }
+      ];
+
+      document.getElementById("nutriGrid").innerHTML = itensNutri
+        .map(
+          (item) => `
+          <div class="nutri-item">
+            <div class="nutri-name">${item.label}</div>
+            <div class="nutri-num">${item.val}</div>
+            <div class="nutri-total">${item.tot}</div>
+          </div>
+        `
+        )
+        .join("");
+
+      document.getElementById("badgeIngredientes").textContent = `${fichaAtual.ingredientesBase.length} itens`;
+      document.getElementById("ingredientesBody").innerHTML = fichaAtual.ingredientesBase
+        .map(
+          (ing) => `
+          <tr>
+            <td><strong>${ing.nome}</strong></td>
+            <td>${formatarQuantidade(ing.qtd, ing.un, pessoas)}</td>
+            <td>${ing.obs}</td>
+          </tr>
+        `
+        )
+        .join("");
+
+      document.getElementById("acompanhamentosList").innerHTML = fichaAtual.acompanhamentosBase
+        .map(
+          (acomp) => `
+          <div class="acomp-card">
+            <div class="acomp-top">
+              <span class="acomp-title">${acomp.nome}</span>
+              <span class="acomp-qty">${formatarQuantidade(acomp.qtd, acomp.un, pessoas)}</span>
+            </div>
+            <p class="acomp-desc">${acomp.motivo}</p>
+          </div>
+        `
+        )
+        .join("");
+
+      document.getElementById("passosList").innerHTML = fichaAtual.passos
+        .map((passo) => `<li>${passo}</li>`)
+        .join("");
+
+      document.getElementById("dicaBox").innerHTML = `<strong>Dica Silene Rodrigues Nutre:</strong> ${fichaAtual.dica}`;
+
+      resultadoArea.classList.remove("hidden");
+    }
+
+    async function montarFicha(nomePrato, pessoas) {
+      const textoLimpo = String(nomePrato || "").trim();
+      if (!textoLimpo) {
+        statusMsg.textContent = "Digite o nome do prato antes de clicar em Pesquisar e Montar Ficha.";
+        pratoInput.focus();
+        return;
+      }
+
+      const qtdPessoas = Math.max(1, parseInt(pessoas, 10) || 1);
+      pratoInput.value = textoLimpo;
+      pessoasInput.value = qtdPessoas;
+
+      const chave = normalizar(textoLimpo);
+      gerarBtn.disabled = true;
+      gerarBtn.textContent = "Pesquisando na web...";
+      statusMsg.textContent = `Pesquisando "${textoLimpo}" para ${qtdPessoas} pessoa(s)...`;
+      webRefBox.classList.add("hidden");
+
+      try {
+        let baseEncontrada = BASE_PRATOS[chave];
+        if (!baseEncontrada) {
+          const chaveParcial = Object.keys(BASE_PRATOS).find(
+            (k) => chave.includes(k) || k.includes(chave)
+          );
+          if (chaveParcial) {
+            baseEncontrada = BASE_PRATOS[chaveParcial];
+          }
+        }
+
+        const achadosWeb = await consultarWebPrato(textoLimpo);
+        const resumoCombinado = achadosWeb.map((r) => `${r.titulo} ${r.trecho}`).join(" ");
+
+        if (baseEncontrada) {
+          fichaAtual = {
+            ...baseEncontrada,
+            nome: textoLimpo
+          };
+        } else {
+          fichaAtual = inferirPerfilPorTexto(resumoCombinado, textoLimpo);
+        }
+
+        const offItem = achadosWeb.find((r) => r.fonte === "Open Food Facts" && r.nutriments);
+        if (!baseEncontrada && offItem && typeof offItem.nutriments.kcal100g === "number") {
+          const fatorPorcao = fichaAtual.pesoPorcaoBase / 100;
+          const m = offItem.nutriments;
+          fichaAtual.nutriPorPorcao = {
+            calorias: Math.round(m.kcal100g * fatorPorcao),
+            carboidratos: typeof m.carb100g === "number" ? Number((m.carb100g * fatorPorcao).toFixed(1)) : fichaAtual.nutriPorPorcao.carboidratos,
+            proteinas: typeof m.prot100g === "number" ? Number((m.prot100g * fatorPorcao).toFixed(1)) : fichaAtual.nutriPorPorcao.proteinas,
+            gorduras: typeof m.fat100g === "number" ? Number((m.fat100g * fatorPorcao).toFixed(1)) : fichaAtual.nutriPorPorcao.gorduras,
+            fibras: typeof m.fiber100g === "number" ? Number((m.fiber100g * fatorPorcao).toFixed(1)) : fichaAtual.nutriPorPorcao.fibras,
+            sodio: typeof m.sodium100g === "number" ? Math.round(m.sodium100g * 1000 * fatorPorcao) : fichaAtual.nutriPorPorcao.sodio
+          };
+        }
+
+        if (achadosWeb.length > 0) {
+          webRefBox.innerHTML =
+            `<strong>Consulta na web realizada:</strong> ` +
+            achadosWeb
+              .map((r) => `[${r.fonte}] <strong>${r.titulo}</strong> — ${r.trecho}`)
+              .join(" | ");
+          webRefBox.classList.remove("hidden");
+          statusMsg.textContent = `Ficha montada após pesquisa na web para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s)).`;
+        } else {
+          statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s)).`;
+        }
+
+        renderizarFicha();
+        adicionarHistorico(fichaAtual, qtdPessoas);
+      } catch {
+        fichaAtual = inferirPerfilPorTexto("", textoLimpo);
+        renderizarFicha();
+        adicionarHistorico(fichaAtual, qtdPessoas);
+        statusMsg.textContent = `Ficha montada para "${fichaAtual.nome}" (${qtdPessoas} pessoa(s)).`;
+      } finally {
+        gerarBtn.disabled = false;
+        gerarBtn.textContent = "Pesquisar e Montar Ficha";
+      }
+    }
+
+    gerarBtn.addEventListener("click", () => {
+      montarFicha(pratoInput.value, pessoasInput.value);
+    });
+
+    pratoInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        montarFicha(pratoInput.value, pessoasInput.value);
+      }
+    });
+
+    pessoasInput.addEventListener("input", () => {
+      if (fichaAtual) renderizarFicha();
+    });
+
+    document.getElementById("menosBtn").addEventListener("click", () => {
+      const atual = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      pessoasInput.value = Math.max(1, atual - 1);
+      if (fichaAtual) renderizarFicha();
+    });
+
+    document.getElementById("maisBtn").addEventListener("click", () => {
+      const atual = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      pessoasInput.value = atual + 1;
+      if (fichaAtual) renderizarFicha();
+    });
+
+    document.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const prato = btn.dataset.prato;
+        const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 4);
+        pratoInput.value = prato;
+        montarFicha(prato, pessoas);
+      });
+    });
+
+    document.getElementById("historyList").addEventListener("click", (e) => {
+      const delBtn = e.target.closest(".history-del");
+      if (delBtn) {
+        excluirHistorico(Number(delBtn.dataset.del));
+        return;
+      }
+
+      const histBtn = e.target.closest(".history-btn");
+      if (histBtn) {
+        const item = historico[Number(histBtn.dataset.hist)];
+        if (!item) return;
+        pratoInput.value = item.nome;
+        pessoasInput.value = item.pessoas;
+        montarFicha(item.nome, item.pessoas);
+      }
+    });
+
+    document.getElementById("limparHistBtn").addEventListener("click", () => {
+      historico = [];
+      salvarHistorico();
+      renderizarHistorico();
+      statusMsg.textContent = "Histórico limpo.";
+    });
+
+    document.getElementById("copiarBtn").addEventListener("click", async () => {
+      if (!fichaAtual) {
+        statusMsg.textContent = "Pesquise um prato primeiro para copiar a ficha.";
+        return;
+      }
+      const pessoas = Math.max(1, parseInt(pessoasInput.value, 10) || 1);
+      const linhas = [
+        `*SILENE RODRIGUES NUTRE*`,
+        `*Prato:* ${fichaAtual.nome}`,
+        `*Porções / Pessoas:* ${pessoas}`,
+        `*Calorias por porção:* ${fichaAtual.nutriPorPorcao.calorias} kcal`,
+        "",
+        "*Ingredientes:*"
+      ];
+      fichaAtual.ingredientesBase.forEach((ing) => {
+        linhas.push(`• ${ing.nome}: ${formatarQuantidade(ing.qtd, ing.un, pessoas)}`);
+      });
+      linhas.push("", "*Acompanhamentos:*");
+      fichaAtual.acompanhamentosBase.forEach((ac) => {
+        linhas.push(`• ${ac.nome}: ${formatarQuantidade(ac.qtd, ac.un, pessoas)}`);
+      });
+
+      try {
+        await navigator.clipboard.writeText(linhas.join("\n"));
+        statusMsg.textContent = "Ficha copiada para a área de transferência (pronta para WhatsApp).";
+      } catch {
+        statusMsg.textContent = "Não foi possível copiar automaticamente neste navegador.";
+      }
+    });
+
+    document.getElementById("imprimirBtn").addEventListener("click", () => {
+      if (!fichaAtual) {
+        statusMsg.textContent = "Pesquise um prato primeiro para imprimir.";
+        return;
+      }
+      window.print();
+    });
+
+    renderizarHistorico();
+  </script>
+</body>
+</html>
